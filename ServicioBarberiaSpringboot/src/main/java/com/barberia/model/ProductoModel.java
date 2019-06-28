@@ -78,22 +78,6 @@ public class ProductoModel
           .getString(11)));
       }
       
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       return ProductoRecords;
     }
     catch (SQLException e)
@@ -112,11 +96,7 @@ public class ProductoModel
     }
 	return ProductoRecords;
   }
-  
-
-
-
-
+ 
   public List<ListarProducto> getProductoR()
   {
     ProductoR = new ArrayList();
@@ -137,30 +117,9 @@ public class ProductoModel
         ProductoR.add(new ListarProducto(rslt
           .getInt(1), rslt
           .getString(2), rslt
-          .getString(3), rslt
-          .getString(4), rslt
-          .getString(5), rslt
-          .getInt(6), rslt
-          .getDouble(7), rslt
-          .getString(8)));
+          .getDouble(3), rslt
+          .getString(4)));
       }
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       return ProductoR;
     }
     catch (SQLException e)
@@ -180,10 +139,6 @@ public class ProductoModel
 	return ProductoR;
   }
   
-
-
-
-
   public List<BuscaProductoInterno> getProductoByWords(String words)
   {
     ProductoSearch = new ArrayList();
@@ -194,7 +149,6 @@ public class ProductoModel
       e.printStackTrace();
     }
     
-
     String SQLQuery = "{call `sp.Buscar_Producto_Interno`(?,?)}";
     try
     {
@@ -218,23 +172,6 @@ public class ProductoModel
           .getString(11), clbl
           .getInt(2)));
       }
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       return ProductoSearch;
     }
     catch (SQLException e)
@@ -253,10 +190,6 @@ public class ProductoModel
     }
 	return ProductoSearch;
   }
-  
-
-
-
 
   public List<BuscarProducto> getProdByWords(String words)
   {
@@ -289,23 +222,6 @@ public class ProductoModel
           .getString(8), clbl
           .getInt(2)));
       }
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       return ProductoS;
     }
     catch (SQLException e)
@@ -325,10 +241,6 @@ public class ProductoModel
 	return ProductoS;
   }
   
-
-
-
-
   public List<RecuperarProductoInterno> getProducto(int id)
   {
     ProductoGet = new ArrayList();
@@ -339,7 +251,6 @@ public class ProductoModel
       e.printStackTrace();
     }
     
-
     String SQLQuery = "{call `sp.Recuperar_Producto_Interno`(?)}";
     try
     {
@@ -358,22 +269,6 @@ public class ProductoModel
           .getString(7)));
       }
       
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       return ProductoGet;
     }
     catch (SQLException e)
@@ -393,13 +288,9 @@ public class ProductoModel
 	return ProductoGet;
   }
   
-
-
-
-
-  public List<RecuperarProductoInterno> getProd(int id)
+  public List<ListarProducto> getProd(int id)
   {
-    ProductoGet = new ArrayList();
+    ProductoR = new ArrayList();
     try
     {
       dbCon = new ConexionBD();
@@ -408,7 +299,7 @@ public class ProductoModel
     }
     
 
-    String SQLQuery = "{call `sp.Recuperar_Producto_Interno`(?)}";
+    String SQLQuery = "{call `sp.Recuperar_Producto_Android`(?)}";
     try
     {
       conn = ConexionBD.setDBConnection();
@@ -416,33 +307,13 @@ public class ProductoModel
       stmt.setInt(1, id);
       ResultSet rslt = stmt.executeQuery();
       while (rslt.next()) {
-        ProductoGet.add(new RecuperarProductoInterno(rslt
-          .getInt(1), rslt
-          .getInt(2), rslt
-          .getString(3), rslt
-          .getInt(4), rslt
-          .getInt(5), rslt
-          .getDouble(6), rslt
-          .getString(7)));
+    	  ProductoR.add(new ListarProducto(rslt
+    	          .getInt(1), rslt
+    	          .getString(2), rslt
+    	          .getDouble(3), rslt
+    	          .getString(4)));
       }
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      return ProductoGet;
+      return ProductoR;
     }
     catch (SQLException e)
     {
@@ -458,13 +329,9 @@ public class ProductoModel
         }
       }
     }
-	return ProductoGet;
+	return ProductoR;
   }
   
-
-
-
-
   public List<MensajesBeans> addProducto(InsertarProducto ins, int idUsuario)
   {
     mensaje = new ArrayList();
@@ -490,22 +357,6 @@ public class ProductoModel
       while (rslt.next()) {
         mensaje.add(new MensajesBeans(rslt.getString(1)));
       }
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       return mensaje;
     }
     catch (SQLException e)
@@ -525,11 +376,6 @@ public class ProductoModel
 	return mensaje;
   }
   
-
-
-
-
-
   public List<MensajesBeans> updtProducto(int idProducto, RecuperarProductoInterno ins, int idUser)
   {
     mensaje = new ArrayList();
@@ -557,22 +403,6 @@ public class ProductoModel
       while (rslt.next()) {
         mensaje.add(new MensajesBeans(rslt.getString(1)));
       }
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       return mensaje;
     }
     catch (SQLException e)
@@ -592,11 +422,6 @@ public class ProductoModel
 	return mensaje;
   }
   
-
-
-
-
-
   public List<MensajesBeans> delProducto(int idProducto)
   {
     mensaje = new ArrayList();
