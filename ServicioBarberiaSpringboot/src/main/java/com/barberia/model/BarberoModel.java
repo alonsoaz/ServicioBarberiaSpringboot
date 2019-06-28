@@ -36,6 +36,7 @@ public class BarberoModel {
 
 	public BarberoModel() {
 	}
+	
 
 	public static BarberoModel getInstance() {
 		if (stdregd == null) {
