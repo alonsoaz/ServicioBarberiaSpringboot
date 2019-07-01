@@ -202,7 +202,7 @@ public class TipoProductoRepositoryImpl implements TipoProductoRepository
       conn = ConexionBD.setDBConnection();
       stmt = conn.prepareCall(SQLQuery);
       stmt.setInt(1, idTipoProducto);
-      stmt.setString(2, ins.getbTipo());
+      stmt.setString(2, ins.getBTipo());
       stmt.setInt(3, ins.getCidEstado());
       rslt = stmt.executeQuery();
       rslt.beforeFirst();

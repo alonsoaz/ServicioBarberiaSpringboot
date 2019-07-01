@@ -290,7 +290,8 @@ public class ProductoRepositoryImpl implements ProductoRepository
       stmt.setInt(1, id);
       ResultSet rslt = stmt.executeQuery();
       while (rslt.next()) {
-        ProductoGet.add(new RecuperarProductoInterno(rslt
+        ProductoGet.add(new RecuperarProductoInterno(
+        		rslt
           .getInt(1), rslt
           .getInt(2), rslt
           .getString(3), rslt
@@ -392,8 +393,8 @@ public class ProductoRepositoryImpl implements ProductoRepository
       clbl.setString(1, ins.getAnombre());
       clbl.setInt(2, ins.getBidMarca());
       clbl.setInt(3, ins.getCidTipo());
-      clbl.setInt(4, ins.getdStock());
-      clbl.setDouble(5, ins.getePrecio());
+      clbl.setInt(4, ins.getDStock());
+      clbl.setDouble(5, ins.getEPrecio());
       clbl.setString(6, ins.getFdescripcion());
       clbl.setInt(7, idUsuario);
       rslt = clbl.executeQuery();
@@ -440,12 +441,12 @@ public class ProductoRepositoryImpl implements ProductoRepository
       conn = ConexionBD.setDBConnection();
       stmt = conn.prepareCall(SQLQuery);
       stmt.setInt(1, idProducto);
-      stmt.setInt(2, ins.getaIdMarca());
+      stmt.setInt(2, ins.getAIdMarca());
       stmt.setInt(3, ins.getBidTipo());
-      stmt.setString(4, ins.getcNombre());
+      stmt.setString(4, ins.getCNombre());
       stmt.setInt(5, ins.getDidEstado());
-      stmt.setInt(6, ins.getfStock());
-      stmt.setDouble(7, ins.getgPrecio());
+      stmt.setInt(6, ins.getFStock());
+      stmt.setDouble(7, ins.getGPrecio());
       stmt.setString(8, ins.getHdescripcion());
       stmt.setInt(9, idUser);
       rslt = stmt.executeQuery();

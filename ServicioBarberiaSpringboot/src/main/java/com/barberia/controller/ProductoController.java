@@ -59,8 +59,9 @@ public class ProductoController {
 		Respuesta<ListarProductoInterno, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+		rpt.lista = ProductoRepositoryImpl.getInstance().getProductoRecords(); 
 		
-		if(ProductoRepositoryImpl.getInstance().getProductoRecords().size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -74,7 +75,7 @@ public class ProductoController {
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ProductoServiceImpl.listarProductos(HttpStatus.OK.toString().trim());
 
-		rpt.lista = ProductoRepositoryImpl.getInstance().getProductoRecords(); 
+
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -87,8 +88,9 @@ public class ProductoController {
 		Respuesta<BuscaProductoInterno, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+		rpt.lista = ProductoRepositoryImpl.getInstance().getProductoByWords(words); 
 		
-		if(ProductoRepositoryImpl.getInstance().getProductoByWords(words).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -102,7 +104,7 @@ public class ProductoController {
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ProductoServiceImpl.buscarProductos(HttpStatus.OK.toString().trim());
 
-		rpt.lista = ProductoRepositoryImpl.getInstance().getProductoByWords(words); 
+
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -115,8 +117,9 @@ public class ProductoController {
 		Respuesta<ListarProducto, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+		rpt.lista = ProductoRepositoryImpl.getInstance().getProductoR(); 
 		
-		if(ProductoRepositoryImpl.getInstance().getProductoR().size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -130,7 +133,7 @@ public class ProductoController {
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ProductoServiceImpl.listarProductosA(HttpStatus.OK.toString().trim());
 
-		rpt.lista = ProductoRepositoryImpl.getInstance().getProductoR(); 
+
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -145,7 +148,9 @@ public class ProductoController {
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
 		
-		if(ProductoRepositoryImpl.getInstance().getProdByWords(words).size()==0) 
+		rpt.lista = ProductoRepositoryImpl.getInstance().getProdByWords(words); 
+		
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -159,7 +164,7 @@ public class ProductoController {
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ProductoServiceImpl.buscarProductosA(HttpStatus.OK.toString().trim());
 
-		rpt.lista = ProductoRepositoryImpl.getInstance().getProdByWords(words); 
+
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -172,8 +177,9 @@ public class ProductoController {
 		Respuesta<ListarProducto, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+		rpt.lista = ProductoRepositoryImpl.getInstance().getProd(id); 
 		
-		if(ProductoRepositoryImpl.getInstance().getProd(id).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -187,7 +193,7 @@ public class ProductoController {
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ProductoServiceImpl.recuperarProductosA(HttpStatus.OK.toString().trim());
 
-		rpt.lista = ProductoRepositoryImpl.getInstance().getProd(id); 
+
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -200,8 +206,9 @@ public class ProductoController {
 		Respuesta<RecuperarProductoInterno, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+		rpt.lista = ProductoRepositoryImpl.getInstance().getProducto(id); 
 		
-		if(ProductoRepositoryImpl.getInstance().getProducto(id).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -215,7 +222,7 @@ public class ProductoController {
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ProductoServiceImpl.recuperarProductos(HttpStatus.OK.toString().trim());
 
-		rpt.lista = ProductoRepositoryImpl.getInstance().getProducto(id); 
+
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -227,13 +234,14 @@ public class ProductoController {
 	@ApiOperation("Registra un producto tomando como parámetro al usuario que lo registra y devuelve mensajes de error o confirmación.")
 	public ResponseEntity<Respuesta<MensajesBeans,Responses,Excepcion>> registerProducto(@PathVariable int idUser, @RequestBody InsertarProducto ins) {
 		InsertarProducto inst = new InsertarProducto(ins.getAnombre(), ins.getBidMarca(), ins.getCidTipo(),
-				ins.getdStock(), ins.getePrecio(), ins.getFdescripcion());
+				ins.getDStock(), ins.getEPrecio(), ins.getFdescripcion());
 
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+		rpt.lista = ProductoRepositoryImpl.getInstance().addProducto(inst, idUser); 
 		
-		if(ProductoRepositoryImpl.getInstance().addProducto(inst, idUser).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -247,7 +255,6 @@ public class ProductoController {
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ProductoServiceImpl.registrarProductos(HttpStatus.OK.toString().trim());
 
-		rpt.lista = ProductoRepositoryImpl.getInstance().addProducto(inst, idUser); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -259,14 +266,16 @@ public class ProductoController {
 	@ApiOperation("Actualiza la información de un producto tomando como parámetro al usuario que lo registra y devuelve mensajes de error o confirmación.")	
 	public ResponseEntity<Respuesta<MensajesBeans,Responses,Excepcion>> updateProducto(@PathVariable int idUser, @PathVariable int id,
 			@RequestBody RecuperarProductoInterno ins) {
-		RecuperarProductoInterno inst = new RecuperarProductoInterno(ins.getaIdMarca(), ins.getBidTipo(),
-				ins.getcNombre(), ins.getDidEstado(), ins.getfStock(), ins.getgPrecio(), ins.getHdescripcion());
+		RecuperarProductoInterno inst = new RecuperarProductoInterno(ins.getAIdMarca(), ins.getBidTipo(),
+				ins.getCNombre(), ins.getDidEstado(), ins.getFStock(), ins.getGPrecio(), ins.getHdescripcion());
 
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ProductoRepositoryImpl.getInstance().updtProducto(id, inst, idUser); 
 		
-		if(ProductoRepositoryImpl.getInstance().updtProducto(id, inst, idUser).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -279,8 +288,6 @@ public class ProductoController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ProductoServiceImpl.actualizarProductos(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ProductoRepositoryImpl.getInstance().updtProducto(id, inst, idUser); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -295,7 +302,9 @@ public class ProductoController {
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
 		
-		if(ProductoRepositoryImpl.getInstance().delProducto(id).size()==0) 
+		rpt.lista = ProductoRepositoryImpl.getInstance().delProducto(id); 
+		
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -309,7 +318,7 @@ public class ProductoController {
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ProductoServiceImpl.eliminarProductos(HttpStatus.OK.toString().trim());
 
-		rpt.lista = ProductoRepositoryImpl.getInstance().delProducto(id); 
+		
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);

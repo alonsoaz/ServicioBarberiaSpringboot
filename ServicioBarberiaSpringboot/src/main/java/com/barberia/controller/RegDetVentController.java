@@ -62,8 +62,10 @@ public class RegDetVentController {
 		Respuesta<MessagenID, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = RegDetVentRepositoryImpl.getInstance().regDetVent(inst, idClient, idProd); 
 		
-		if(RegDetVentRepositoryImpl.getInstance().regDetVent(inst, idClient, idProd).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -76,8 +78,6 @@ public class RegDetVentController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=RegDetVentServiceImpl.regProdxPagar(HttpStatus.OK.toString().trim());
-
-		rpt.lista = RegDetVentRepositoryImpl.getInstance().regDetVent(inst, idClient, idProd); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -90,8 +90,10 @@ public class RegDetVentController {
 		Respuesta<MostrarVentaPorPagar, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = RegDetVentRepositoryImpl.getInstance().showVentaXpagar(idClient); 
 		
-		if(RegDetVentRepositoryImpl.getInstance().showVentaXpagar(idClient).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -104,8 +106,6 @@ public class RegDetVentController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=RegDetVentServiceImpl.mostrarCarrito(HttpStatus.OK.toString().trim());
-
-		rpt.lista = RegDetVentRepositoryImpl.getInstance().showVentaXpagar(idClient); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -118,8 +118,10 @@ public class RegDetVentController {
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = RegDetVentRepositoryImpl.getInstance().delVenta(idClient); 
 		
-		if(RegDetVentRepositoryImpl.getInstance().delVenta(idClient).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -132,8 +134,6 @@ public class RegDetVentController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=RegDetVentServiceImpl.eliminarCarrito(HttpStatus.OK.toString().trim());
-
-		rpt.lista = RegDetVentRepositoryImpl.getInstance().delVenta(idClient); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -146,8 +146,10 @@ public class RegDetVentController {
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = RegDetVentRepositoryImpl.getInstance().payVenta(idClient); 
 		
-		if(RegDetVentRepositoryImpl.getInstance().payVenta(idClient).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -160,8 +162,6 @@ public class RegDetVentController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=RegDetVentServiceImpl.pagarCarrito(HttpStatus.OK.toString().trim());
-
-		rpt.lista = RegDetVentRepositoryImpl.getInstance().payVenta(idClient); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -174,8 +174,10 @@ public class RegDetVentController {
 		Respuesta<MostrarDetalleVenta, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = RegDetVentRepositoryImpl.getInstance().ShowDVxPagar(idClient); 
 		
-		if(RegDetVentRepositoryImpl.getInstance().ShowDVxPagar(idClient).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -188,8 +190,6 @@ public class RegDetVentController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=RegDetVentServiceImpl.mostrarDetalleCarrito(HttpStatus.OK.toString().trim());
-
-		rpt.lista = RegDetVentRepositoryImpl.getInstance().ShowDVxPagar(idClient); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -202,8 +202,10 @@ public class RegDetVentController {
 		Respuesta<RecuperarDetalleVenta, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = RegDetVentRepositoryImpl.getInstance().getDV(id); 
 		
-		if(RegDetVentRepositoryImpl.getInstance().getDV(id).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -216,8 +218,6 @@ public class RegDetVentController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=RegDetVentServiceImpl.recuperarDetalleCarrito(HttpStatus.OK.toString().trim());
-
-		rpt.lista = RegDetVentRepositoryImpl.getInstance().getDV(id); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -234,8 +234,10 @@ public class RegDetVentController {
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = RegDetVentRepositoryImpl.getInstance().updtDetVent(id, inst); 
 		
-		if(RegDetVentRepositoryImpl.getInstance().updtDetVent(id, inst).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -248,8 +250,6 @@ public class RegDetVentController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=RegDetVentServiceImpl.actualizarDetalleCarrito(HttpStatus.OK.toString().trim());
-
-		rpt.lista = RegDetVentRepositoryImpl.getInstance().updtDetVent(id, inst); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -263,8 +263,10 @@ public class RegDetVentController {
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = RegDetVentRepositoryImpl.getInstance().delDV(id);
 		
-		if(RegDetVentRepositoryImpl.getInstance().delDV(id).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -276,9 +278,7 @@ public class RegDetVentController {
 		}
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
-	    rpt.excepcion=RegDetVentServiceImpl.eliminarDetalleCarrito(HttpStatus.OK.toString().trim());
-
-		rpt.lista = RegDetVentRepositoryImpl.getInstance().delDV(id); 
+	    rpt.excepcion=RegDetVentServiceImpl.eliminarDetalleCarrito(HttpStatus.OK.toString().trim()); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -291,8 +291,10 @@ public class RegDetVentController {
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = RegDetVentRepositoryImpl.getInstance().payDetVenta(idClient, id); 
 		
-		if(RegDetVentRepositoryImpl.getInstance().payDetVenta(idClient, id).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -305,8 +307,6 @@ public class RegDetVentController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=RegDetVentServiceImpl.pagarDetalleCarrito(HttpStatus.OK.toString().trim());
-
-		rpt.lista = RegDetVentRepositoryImpl.getInstance().payDetVenta(idClient, id); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -319,8 +319,10 @@ public class RegDetVentController {
 		Respuesta<MostrarVentaPagada, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = RegDetVentRepositoryImpl.getInstance().showVentaPagada(idClient); 
 		
-		if(RegDetVentRepositoryImpl.getInstance().showVentaPagada(idClient).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -333,8 +335,6 @@ public class RegDetVentController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=RegDetVentServiceImpl.listarCompras(HttpStatus.OK.toString().trim());
-
-		rpt.lista = RegDetVentRepositoryImpl.getInstance().showVentaPagada(idClient); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -347,8 +347,10 @@ public class RegDetVentController {
 		Respuesta<MostrarDetalleVentaPagada, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = RegDetVentRepositoryImpl.getInstance().showDetVentaPagada(idClient, id); 
 		
-		if(RegDetVentRepositoryImpl.getInstance().showDetVentaPagada(idClient, id).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -361,8 +363,6 @@ public class RegDetVentController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=RegDetVentServiceImpl.listarDetalleDeCompras(HttpStatus.OK.toString().trim());
-
-		rpt.lista = RegDetVentRepositoryImpl.getInstance().showDetVentaPagada(idClient, id); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);

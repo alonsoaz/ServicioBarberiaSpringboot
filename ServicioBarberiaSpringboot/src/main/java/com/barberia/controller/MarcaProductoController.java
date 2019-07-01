@@ -54,10 +54,12 @@ public class MarcaProductoController {
 		Respuesta<ListarMarca, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = MarcaProductoRepositoryImpl.getInstance().getMarcaProductoR(); 
 		
-		if(MarcaProductoRepositoryImpl.getInstance().getMarcaProductoR().size()==0) 
+		if(rpt.lista.size()==0) 
 		{
-		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+			LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
 		    rpt.excepcion=MarcaProductoServiceImpl.listarMarcaProducto(HttpStatus.NOT_FOUND.toString().trim());
 		    lista.add(responses);
@@ -68,8 +70,6 @@ public class MarcaProductoController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=MarcaProductoServiceImpl.listarMarcaProducto(HttpStatus.OK.toString().trim());
-
-		rpt.lista = MarcaProductoRepositoryImpl.getInstance().getMarcaProductoR(); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -82,8 +82,10 @@ public class MarcaProductoController {
 		Respuesta<RecuperarMarcaInterno, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = MarcaProductoRepositoryImpl.getInstance().getMarcaProducto(id); 
 		
-		if(MarcaProductoRepositoryImpl.getInstance().getMarcaProducto(id).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -96,8 +98,6 @@ public class MarcaProductoController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=MarcaProductoServiceImpl.recuperarMarcaProducto(HttpStatus.OK.toString().trim());
-
-		rpt.lista = MarcaProductoRepositoryImpl.getInstance().getMarcaProducto(id); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -113,8 +113,10 @@ public class MarcaProductoController {
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = MarcaProductoRepositoryImpl.getInstance().addMarcaProducto(inst, idUser); 
 		
-		if(MarcaProductoRepositoryImpl.getInstance().addMarcaProducto(inst, idUser).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -127,8 +129,6 @@ public class MarcaProductoController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=MarcaProductoServiceImpl.registrarMarcaProducto(HttpStatus.OK.toString().trim());
-
-		rpt.lista = MarcaProductoRepositoryImpl.getInstance().addMarcaProducto(inst, idUser); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -145,8 +145,10 @@ public class MarcaProductoController {
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = MarcaProductoRepositoryImpl.getInstance().updtMarcaProducto(id, inst);
 		
-		if(MarcaProductoRepositoryImpl.getInstance().updtMarcaProducto(id, inst).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -158,9 +160,7 @@ public class MarcaProductoController {
 		}
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
-	    rpt.excepcion=MarcaProductoServiceImpl.actualizarMarcaProducto(HttpStatus.OK.toString().trim());
-
-		rpt.lista = MarcaProductoRepositoryImpl.getInstance().updtMarcaProducto(id, inst); 
+	    rpt.excepcion=MarcaProductoServiceImpl.actualizarMarcaProducto(HttpStatus.OK.toString().trim()); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -174,8 +174,10 @@ public class MarcaProductoController {
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = MarcaProductoRepositoryImpl.getInstance().delMarcaProducto(id); 
 		
-		if(MarcaProductoRepositoryImpl.getInstance().delMarcaProducto(id).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -188,8 +190,6 @@ public class MarcaProductoController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=MarcaProductoServiceImpl.eliminarMarcaProducto(HttpStatus.OK.toString().trim());
-
-		rpt.lista = MarcaProductoRepositoryImpl.getInstance().delMarcaProducto(id); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);

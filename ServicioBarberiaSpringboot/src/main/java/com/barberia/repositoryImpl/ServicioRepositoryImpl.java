@@ -226,8 +226,12 @@ public class ServicioRepositoryImpl implements ServicioRepository{
 			stmt.setInt(1, id);
 			ResultSet rslt = stmt.executeQuery();
 			while (rslt.next()) {
-				ServicioGet.add(new RecuperarServicioInterno(rslt.getString(1), rslt.getInt(2), rslt.getInt(3),
-						rslt.getDouble(4), rslt.getString(5)));
+				ServicioGet.add(new RecuperarServicioInterno(
+						rslt.getString(1), 
+						rslt.getInt(2), 
+						rslt.getInt(3),
+						rslt.getDouble(4), 
+						rslt.getString(5)));
 			}
 
 			LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);

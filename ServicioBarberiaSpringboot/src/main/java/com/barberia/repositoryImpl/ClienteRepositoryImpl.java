@@ -147,8 +147,14 @@ public class ClienteRepositoryImpl implements ClienteRepository {
 			stmt.setInt(1, id);
 			ResultSet rslt = stmt.executeQuery();
 			while (rslt.next()) {
-				clienteGet.add(new RecuperarClienteInterno(rslt.getInt(7), rslt.getString(1), rslt.getString(2),
-						rslt.getString(3), rslt.getString(4), rslt.getString(5), rslt.getString(6)));
+				clienteGet.add(new RecuperarClienteInterno(
+						rslt.getString(1), 
+						rslt.getString(2),
+						rslt.getString(3), 
+						rslt.getString(4), 
+						rslt.getString(5), 
+						rslt.getString(6),
+						rslt.getInt(7)));
 			}
 
 		  	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
@@ -183,12 +189,12 @@ public class ClienteRepositoryImpl implements ClienteRepository {
 		try {
 			conn = ConexionBD.setDBConnection();
 			clbl = conn.prepareCall(SQLQuery);
-			clbl.setString(1, ins.getaNombre());
-			clbl.setString(2, ins.getbApellido());
-			clbl.setString(3, ins.getcTelefono());
-			clbl.setString(4, ins.getdDni());
-			clbl.setString(5, ins.geteEmail());
-			clbl.setString(6, ins.getfDirecion());
+			clbl.setString(1, ins.getANombre());
+			clbl.setString(2, ins.getBApellido());
+			clbl.setString(3, ins.getCTelefono());
+			clbl.setString(4, ins.getDDni());
+			clbl.setString(5, ins.getEEmail());
+			clbl.setString(6, ins.getFDirecion());
 			clbl.setString(7, ins.getPassword());
 			clbl.setInt(8, idUsuario);
 			clbl.registerOutParameter(9, 4);
@@ -229,12 +235,12 @@ public class ClienteRepositoryImpl implements ClienteRepository {
 		try {
 			conn = ConexionBD.setDBConnection();
 			clbl = conn.prepareCall(SQLQuery);
-			clbl.setString(1, ins.getaNombre());
-			clbl.setString(2, ins.getbApellido());
-			clbl.setString(3, ins.getcTelefono());
-			clbl.setString(4, ins.getdDni());
-			clbl.setString(5, ins.geteEmail());
-			clbl.setString(6, ins.getfDirecion());
+			clbl.setString(1, ins.getANombre());
+			clbl.setString(2, ins.getBApellido());
+			clbl.setString(3, ins.getCTelefono());
+			clbl.setString(4, ins.getDDni());
+			clbl.setString(5, ins.getEEmail());
+			clbl.setString(6, ins.getFDirecion());
 			clbl.setInt(7, idUsuario);
 			clbl.registerOutParameter(8, 4);
 			rslt = clbl.executeQuery();
@@ -274,8 +280,8 @@ public class ClienteRepositoryImpl implements ClienteRepository {
 		try {
 			conn = ConexionBD.setDBConnection();
 			clbl = conn.prepareCall(SQLQuery);
-			clbl.setString(1, ins.getaDni());
-			clbl.setString(2, ins.getbPassword());
+			clbl.setString(1, ins.getADni());
+			clbl.setString(2, ins.getBPassword());
 			clbl.registerOutParameter(3, 4);
 			
 			rslt = clbl.executeQuery();
@@ -321,7 +327,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
 			conn = ConexionBD.setDBConnection();
 			stmt = conn.prepareCall(SQLQuery);
 			stmt.setString(2, ins.getApass());
-			stmt.setString(3, ins.getbNewPass());
+			stmt.setString(3, ins.getBNewPass());
 			stmt.setInt(1, idCliente);
 			rslt = stmt.executeQuery();
 			rslt.beforeFirst();
@@ -365,7 +371,7 @@ public class ClienteRepositoryImpl implements ClienteRepository {
 			stmt.setString(3, ins.getBnombre());
 			stmt.setString(4, ins.getCapellido());
 			stmt.setString(5, ins.getDtelefono());
-			stmt.setString(6, ins.geteDni());
+			stmt.setString(6, ins.getEDni());
 			stmt.setString(7, ins.getFcorreo());
 			stmt.setString(8, ins.getGdireccion());
 			stmt.setInt(9, idUser);

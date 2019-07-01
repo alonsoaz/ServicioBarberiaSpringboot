@@ -59,8 +59,9 @@ public class BarberoController {
 		Respuesta<ListarBarberoInterno, Responses, Excepcion> rpt = new Respuesta<>();
 		Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+		rpt.lista = BarberoRepositoryImpl.getInstance().getBarberoRecords(); 
 		
-		if(BarberoRepositoryImpl.getInstance().getBarberoRecords().size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -74,7 +75,7 @@ public class BarberoController {
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=BarberoServiceImpl.listarBarberoInterno(HttpStatus.OK.toString().trim());
 
-		rpt.lista = BarberoRepositoryImpl.getInstance().getBarberoRecords(); 
+
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -87,8 +88,10 @@ public class BarberoController {
 		Respuesta<ListarBarbero, Responses, Excepcion> rpt = new Respuesta<>();
 		Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = BarberoRepositoryImpl.getInstance().getBarberoR(); 
 		
-		if(BarberoRepositoryImpl.getInstance().getBarberoR().size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -101,8 +104,6 @@ public class BarberoController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=BarberoServiceImpl.listarBarberoInterno(HttpStatus.OK.toString().trim());
-
-		rpt.lista = BarberoRepositoryImpl.getInstance().getBarberoR(); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -116,8 +117,10 @@ public class BarberoController {
 		Respuesta<BuscarBarberoInterno, Responses, Excepcion> rpt = new Respuesta<>();
 		Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = BarberoRepositoryImpl.getInstance().getBarberoByWords(words); 
 		
-		if(BarberoRepositoryImpl.getInstance().getBarberoByWords(words).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -130,8 +133,6 @@ public class BarberoController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=BarberoServiceImpl.buscarBarberoInterno(HttpStatus.OK.toString().trim());
-
-		rpt.lista = BarberoRepositoryImpl.getInstance().getBarberoByWords(words); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -148,8 +149,10 @@ public class BarberoController {
 		
 		Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = BarberoRepositoryImpl.getInstance().getBarbByWords(words); 
 		
-		if(BarberoRepositoryImpl.getInstance().getBarberoRecords().size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -161,8 +164,6 @@ public class BarberoController {
 		}
 		
 	    rpt.excepcion=BarberoServiceImpl.listarBarbero(HttpStatus.OK.toString().trim());
-
-		rpt.lista = BarberoRepositoryImpl.getInstance().getBarbByWords(words); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -175,8 +176,10 @@ public class BarberoController {
 		Respuesta<ListarBarbero, Responses, Excepcion> rpt = new Respuesta<>();
 		Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = BarberoRepositoryImpl.getInstance().getBarberoA(id); 
 		
-		if(BarberoRepositoryImpl.getInstance().getBarberoA(id).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -189,8 +192,6 @@ public class BarberoController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=BarberoServiceImpl.buscarBarbero(HttpStatus.OK.toString().trim());
-
-		rpt.lista = BarberoRepositoryImpl.getInstance().getBarberoA(id); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -203,8 +204,10 @@ public class BarberoController {
 		Respuesta<RecuperarBarberoInterno, Responses, Excepcion> rpt = new Respuesta<>();
 		Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = BarberoRepositoryImpl.getInstance().getBarbero(id); 
 		
-		if(BarberoRepositoryImpl.getInstance().getBarbero(id).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -217,8 +220,6 @@ public class BarberoController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=BarberoServiceImpl.recuperarBarbero(HttpStatus.OK.toString().trim());
-
-		rpt.lista = BarberoRepositoryImpl.getInstance().getBarbero(id); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -235,8 +236,10 @@ public class BarberoController {
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
 		Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = BarberoRepositoryImpl.getInstance().addBarbero(ins, idUser);
 		
-		if(BarberoRepositoryImpl.getInstance().addBarbero(ins, idUser).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -247,9 +250,7 @@ public class BarberoController {
 		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
 		}
 		
-	    rpt.excepcion=BarberoServiceImpl.registrarBarbero(HttpStatus.OK.toString().trim());
-
-		rpt.lista = BarberoRepositoryImpl.getInstance().addBarbero(ins, idUser); 
+	    rpt.excepcion=BarberoServiceImpl.registrarBarbero(HttpStatus.OK.toString().trim()); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -261,14 +262,15 @@ public class BarberoController {
 	@ApiOperation("Actualiza la información de un barbero tomando como parámetro al usuario que lo registra y devuelve mensajes de error o confirmación.")	
 	public ResponseEntity<Respuesta<MensajesBeans,Responses,Excepcion>>  updateBarber(@PathVariable int idUser, @PathVariable int id,
 			@RequestBody RecuperarBarberoInterno ins) {
-		RecuperarBarberoInterno inst = new RecuperarBarberoInterno(ins.getAidEstado(), ins.getbNombre(),
-				ins.getcApellido(), ins.getdTelefono(), ins.geteDni(), ins.getfEmail(), ins.getgDireccion());
+		RecuperarBarberoInterno inst = new RecuperarBarberoInterno(ins.getAidEstado(), ins.getBNombre(),
+				ins.getCApellido(), ins.getDTelefono(), ins.getEDni(), ins.getFEmail(), ins.getGDireccion());
 
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
 		Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+		rpt.lista = BarberoRepositoryImpl.getInstance().updtBarbero(id, ins, idUser); 
 		
-		if(BarberoRepositoryImpl.getInstance().updtBarbero(id, ins, idUser).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -281,7 +283,7 @@ public class BarberoController {
 		
 	    rpt.excepcion=BarberoServiceImpl.actualizarBarbero(HttpStatus.OK.toString().trim());
 
-		rpt.lista = BarberoRepositoryImpl.getInstance().updtBarbero(id, ins, idUser); 
+		
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -295,8 +297,9 @@ public class BarberoController {
 		Respuesta<MensajesBeans, Responses,Excepcion> rpt = new Respuesta<>();
 		Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+		rpt.lista = BarberoRepositoryImpl.getInstance().delBarbero(id); 
 		
-		if(BarberoRepositoryImpl.getInstance().delBarbero(id).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -309,7 +312,6 @@ public class BarberoController {
 		}
 		
 	    rpt.excepcion=BarberoServiceImpl.eliminarBarbero(HttpStatus.OK.toString().trim());
-		rpt.lista = BarberoRepositoryImpl.getInstance().delBarbero(id); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);

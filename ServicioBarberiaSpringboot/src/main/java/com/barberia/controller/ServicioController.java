@@ -58,8 +58,10 @@ public class ServicioController {
 		Respuesta<ListarServicioInterno, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ServicioRepositoryImpl.getInstance().getServicioRecords(); 
 		
-		if(ServicioRepositoryImpl.getInstance().getServicioRecords().size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -72,8 +74,6 @@ public class ServicioController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ServicioServiceImpl.listarServicios(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ServicioRepositoryImpl.getInstance().getServicioRecords(); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -86,8 +86,10 @@ public class ServicioController {
 		Respuesta<BuscarServicioInterno, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ServicioRepositoryImpl.getInstance().getServicioByWords(words); 
 		
-		if(ServicioRepositoryImpl.getInstance().getServicioByWords(words).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -100,8 +102,6 @@ public class ServicioController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ServicioServiceImpl.buscarServicios(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ServicioRepositoryImpl.getInstance().getServicioByWords(words); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -115,8 +115,10 @@ public class ServicioController {
 		Respuesta<ListarServicio, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ServicioRepositoryImpl.getInstance().getServicioR(); 
 		
-		if(ServicioRepositoryImpl.getInstance().getServicioR().size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -129,8 +131,6 @@ public class ServicioController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ServicioServiceImpl.listarServiciosA(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ServicioRepositoryImpl.getInstance().getServicioR(); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -144,8 +144,10 @@ public class ServicioController {
 		Respuesta<BuscarServicio, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ServicioRepositoryImpl.getInstance().getServByWords(words); 
 		
-		if(ServicioRepositoryImpl.getInstance().getServByWords(words).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -158,8 +160,6 @@ public class ServicioController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ServicioServiceImpl.buscarServiciosA(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ServicioRepositoryImpl.getInstance().getServByWords(words); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -172,8 +172,10 @@ public class ServicioController {
 		Respuesta<ListarServicio, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ServicioRepositoryImpl.getInstance().getServicioA(id); 
 		
-		if(ServicioRepositoryImpl.getInstance().getServicioA(id).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -186,8 +188,6 @@ public class ServicioController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ServicioServiceImpl.recuperarServiciosA(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ServicioRepositoryImpl.getInstance().getServicioA(id); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -200,8 +200,10 @@ public class ServicioController {
 		Respuesta<RecuperarServicioInterno, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ServicioRepositoryImpl.getInstance().getServicio(id); 
 		
-		if(ServicioRepositoryImpl.getInstance().getServicio(id).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -214,8 +216,6 @@ public class ServicioController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ServicioServiceImpl.recuperarServicios(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ServicioRepositoryImpl.getInstance().getServicio(id); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -232,8 +232,10 @@ public class ServicioController {
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ServicioRepositoryImpl.getInstance().addServicio(inst, idUser); 
 		
-		if(ServicioRepositoryImpl.getInstance().addServicio(inst, idUser).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -246,8 +248,6 @@ public class ServicioController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ServicioServiceImpl.registrarServicios(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ServicioRepositoryImpl.getInstance().addServicio(inst, idUser); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -265,8 +265,10 @@ public class ServicioController {
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ServicioRepositoryImpl.getInstance().updtServicio(id, inst, idUser); 
 		
-		if(ServicioRepositoryImpl.getInstance().updtServicio(id, inst, idUser).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -279,8 +281,6 @@ public class ServicioController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ServicioServiceImpl.actualizarServicios(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ServicioRepositoryImpl.getInstance().updtServicio(id, inst, idUser); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -294,8 +294,10 @@ public class ServicioController {
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ServicioRepositoryImpl.getInstance().delServicio(id); 
 		
-		if(ServicioRepositoryImpl.getInstance().delServicio(id).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -308,8 +310,6 @@ public class ServicioController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ServicioServiceImpl.eliminarServicios(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ServicioRepositoryImpl.getInstance().delServicio(id); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);

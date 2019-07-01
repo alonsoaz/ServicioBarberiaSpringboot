@@ -50,8 +50,10 @@ public class NegocioInternoController {
 		Respuesta<MostrarVentaInterno, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = NegocioInternoRepositoryImpl.getInstance().getVenta(); 
 		
-		if(NegocioInternoRepositoryImpl.getInstance().getVenta().size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -64,8 +66,6 @@ public class NegocioInternoController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=NegocioInternoServiceImpl.listarVentas(HttpStatus.OK.toString().trim());
-
-		rpt.lista = NegocioInternoRepositoryImpl.getInstance().getVenta(); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -78,8 +78,10 @@ public class NegocioInternoController {
 		Respuesta<MostrarDetalleVentaInterno, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = NegocioInternoRepositoryImpl.getInstance().getDetVenta(idVenta); 
 		
-		if(NegocioInternoRepositoryImpl.getInstance().getDetVenta(idVenta).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -92,8 +94,6 @@ public class NegocioInternoController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=NegocioInternoServiceImpl.listarDetalleVentas(HttpStatus.OK.toString().trim());
-
-		rpt.lista = NegocioInternoRepositoryImpl.getInstance().getDetVenta(idVenta); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -107,8 +107,10 @@ public class NegocioInternoController {
 		Respuesta<ListarReservasPorBarberoInterno, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = NegocioInternoRepositoryImpl.getInstance().getResBarbero(idBarbero); 
 		
-		if(NegocioInternoRepositoryImpl.getInstance().getResBarbero(idBarbero).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -121,8 +123,6 @@ public class NegocioInternoController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=NegocioInternoServiceImpl.listarReservasPorBarbero(HttpStatus.OK.toString().trim());
-
-		rpt.lista = NegocioInternoRepositoryImpl.getInstance().getResBarbero(idBarbero); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -137,8 +137,10 @@ public class NegocioInternoController {
 		Respuesta<ListarReservasPorClienteInterno, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = NegocioInternoRepositoryImpl.getInstance().getResCliente(idClient); 
 		
-		if(NegocioInternoRepositoryImpl.getInstance().getResCliente(idClient).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -151,8 +153,6 @@ public class NegocioInternoController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=NegocioInternoServiceImpl.listarReservasPorCliente(HttpStatus.OK.toString().trim());
-
-		rpt.lista = NegocioInternoRepositoryImpl.getInstance().getResCliente(idClient); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);

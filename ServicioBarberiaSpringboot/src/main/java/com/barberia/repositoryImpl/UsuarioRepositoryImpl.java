@@ -327,7 +327,7 @@ public class UsuarioRepositoryImpl implements UsuarioRepository {
 			conn = ConexionBD.setDBConnection();
 			stmt = conn.prepareCall(SQLQuery);
 			stmt.setString(2, ins.getApass());
-			stmt.setString(3, ins.getbNewPass());
+			stmt.setString(3, ins.getBNewPass());
 			stmt.setInt(1, idUsuario);
 			rslt = stmt.executeQuery();
 			rslt.beforeFirst();

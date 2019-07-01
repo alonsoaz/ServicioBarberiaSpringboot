@@ -60,8 +60,10 @@ public class UserController {
 		Respuesta<ListarUsuario, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = UsuarioRepositoryImpl.getInstance().getUsuarioRecords(); 
 		
-		if(UsuarioRepositoryImpl.getInstance().getUsuarioRecords().size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -74,8 +76,6 @@ public class UserController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=UsuarioServiceImpl.listarUsuarios(HttpStatus.OK.toString().trim());
-
-		rpt.lista = UsuarioRepositoryImpl.getInstance().getUsuarioRecords(); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -88,8 +88,10 @@ public class UserController {
 		Respuesta<BuscarUsuario, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = UsuarioRepositoryImpl.getInstance().getUsuarioByWords(words); 
 		
-		if(UsuarioRepositoryImpl.getInstance().getUsuarioByWords(words).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -102,8 +104,6 @@ public class UserController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=UsuarioServiceImpl.buscarUsuarios(HttpStatus.OK.toString().trim());
-
-		rpt.lista = UsuarioRepositoryImpl.getInstance().getUsuarioByWords(words); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -116,8 +116,10 @@ public class UserController {
 		Respuesta<RecuperaraUsuario, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = UsuarioRepositoryImpl.getInstance().getUsuario(id); 
 		
-		if(UsuarioRepositoryImpl.getInstance().getUsuario(id).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -130,8 +132,6 @@ public class UserController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=UsuarioServiceImpl.recuperarUsuario(HttpStatus.OK.toString().trim());
-
-		rpt.lista = UsuarioRepositoryImpl.getInstance().getUsuario(id); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -148,8 +148,10 @@ public class UserController {
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = UsuarioRepositoryImpl.getInstance().addUsuario(inst); 
 		
-		if(UsuarioRepositoryImpl.getInstance().addUsuario(inst).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -162,8 +164,6 @@ public class UserController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=UsuarioServiceImpl.registrarUsuario(HttpStatus.OK.toString().trim());
-
-		rpt.lista = UsuarioRepositoryImpl.getInstance().addUsuario(inst); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -180,8 +180,10 @@ public class UserController {
 		Respuesta<MessagenID, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = UsuarioRepositoryImpl.getInstance().addUsuarioLogin(inst); 
 		
-		if(UsuarioRepositoryImpl.getInstance().addUsuarioLogin(inst).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -194,8 +196,6 @@ public class UserController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=UsuarioServiceImpl.registarUsuarioLogin(HttpStatus.OK.toString().trim());
-
-		rpt.lista = UsuarioRepositoryImpl.getInstance().addUsuarioLogin(inst); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -210,8 +210,10 @@ public class UserController {
 		Respuesta<MessagenID, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = UsuarioRepositoryImpl.getInstance().LogInUser(inst); 
 		
-		if(UsuarioRepositoryImpl.getInstance().LogInUser(inst).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -224,8 +226,6 @@ public class UserController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=UsuarioServiceImpl.loginUsuario(HttpStatus.OK.toString().trim());
-
-		rpt.lista = UsuarioRepositoryImpl.getInstance().LogInUser(inst); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -238,8 +238,10 @@ public class UserController {
 		Respuesta<RecuperarTipoUsuario, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = UsuarioRepositoryImpl.getInstance().TipoUsuario(); 
 		
-		if(UsuarioRepositoryImpl.getInstance().TipoUsuario().size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -252,8 +254,6 @@ public class UserController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=UsuarioServiceImpl.listarTipoUsuario(HttpStatus.OK.toString().trim());
-
-		rpt.lista = UsuarioRepositoryImpl.getInstance().TipoUsuario(); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -263,13 +263,15 @@ public class UserController {
 	@ResponseBody
 	@ApiOperation("Cambia la contraseña de un usuario, devuelve un mensaje de error o confirmación y el identificador del usuario.")
 	public ResponseEntity<Respuesta<MessagenID,Responses,Excepcion>> changePassUsr(@PathVariable int id, @RequestBody CambiarClave ins) {
-		CambiarClave inst = new CambiarClave(ins.getApass(), ins.getbNewPass());
+		CambiarClave inst = new CambiarClave(ins.getApass(), ins.getBNewPass());
 
 		Respuesta<MessagenID, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = UsuarioRepositoryImpl.getInstance().changePass(inst, id); 
 		
-		if(UsuarioRepositoryImpl.getInstance().changePass(inst, id).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -282,8 +284,6 @@ public class UserController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=UsuarioServiceImpl.cambiarPassUsuarios(HttpStatus.OK.toString().trim());
-
-		rpt.lista = UsuarioRepositoryImpl.getInstance().changePass(inst, id); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -299,8 +299,10 @@ public class UserController {
 		Respuesta<MessagenID, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = UsuarioRepositoryImpl.getInstance().updtUsr(inst, id); 
 		
-		if(UsuarioRepositoryImpl.getInstance().updtUsr(inst, id).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -313,8 +315,6 @@ public class UserController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=UsuarioServiceImpl.actualizarUsuarios(HttpStatus.OK.toString().trim());
-
-		rpt.lista = UsuarioRepositoryImpl.getInstance().updtUsr(inst, id); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);

@@ -344,12 +344,12 @@ public class BarberoRepositoryImpl implements BarberoRepository {
 			stmt = conn.prepareCall(SQLQuery);
 			stmt.setInt(1, idBarbero);
 			stmt.setInt(2, ins.getAidEstado());
-			stmt.setString(3, ins.getbNombre());
-			stmt.setString(4, ins.getcApellido());
-			stmt.setString(5, ins.getdTelefono());
-			stmt.setString(6, ins.geteDni());
-			stmt.setString(7, ins.getfEmail());
-			stmt.setString(8, ins.getgDireccion());
+			stmt.setString(3, ins.getBNombre());
+			stmt.setString(4, ins.getCApellido());
+			stmt.setString(5, ins.getDTelefono());
+			stmt.setString(6, ins.getEDni());
+			stmt.setString(7, ins.getFEmail());
+			stmt.setString(8, ins.getGDireccion());
 			stmt.setInt(9, idUser);
 			rslt = stmt.executeQuery();
 			rslt.beforeFirst();

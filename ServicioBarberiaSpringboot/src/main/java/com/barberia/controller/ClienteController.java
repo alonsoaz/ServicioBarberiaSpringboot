@@ -56,8 +56,10 @@ public class ClienteController {
 		Respuesta<ListarClienteInterno, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ClienteRepositoryImpl.getInstance().getClienteByWords(words); 
 		
-		if(ClienteRepositoryImpl.getInstance().getClienteRecords().size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -86,7 +88,7 @@ public class ClienteController {
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
 		
-		if(ClienteRepositoryImpl.getInstance().getClienteByWords(words).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -99,8 +101,6 @@ public class ClienteController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ClienteServiceImpl.buscarClientes(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ClienteRepositoryImpl.getInstance().getClienteByWords(words); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -113,8 +113,10 @@ public class ClienteController {
 		Respuesta<RecuperarClienteInterno, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ClienteRepositoryImpl.getInstance().getCliente(id); 
 		
-		if(ClienteRepositoryImpl.getInstance().getCliente(id).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -127,8 +129,6 @@ public class ClienteController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ClienteServiceImpl.recuperarCliente(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ClienteRepositoryImpl.getInstance().getCliente(id); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -138,14 +138,16 @@ public class ClienteController {
 	@ResponseBody
 	@ApiOperation("Registra un cliente tomando como parámetro al usuario que lo registra y devuelve mensajes de error o confirmación.")
 	public ResponseEntity<Respuesta<MensajesBeans,Responses,Excepcion>> registerUsuario(@PathVariable int idUser, @RequestBody InsertarCliente ins) {
-		InsertarCliente inst = new InsertarCliente(ins.getaNombre(), ins.getbApellido(), ins.getcTelefono(),
-				ins.getdDni(), ins.geteEmail(), ins.getfDirecion(), ins.getPassword());
+		InsertarCliente inst = new InsertarCliente(ins.getANombre(), ins.getBApellido(), ins.getCTelefono(),
+				ins.getDDni(), ins.getEEmail(), ins.getFDirecion(), ins.getPassword());
 
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ClienteRepositoryImpl.getInstance().addCliente(inst, idUser); 
 		
-		if(ClienteRepositoryImpl.getInstance().addCliente(inst, idUser).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -158,8 +160,6 @@ public class ClienteController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ClienteServiceImpl.registrarCliente(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ClienteRepositoryImpl.getInstance().addCliente(inst, idUser); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -170,14 +170,16 @@ public class ClienteController {
 	@ResponseBody
 	@ApiOperation("Registra un cliente tomando como parámetro al usuario que lo registra, devuelve mensajes de error o confirmacióny su identificador para el posterior acceso a su cuenta (Log In).")
 	public ResponseEntity<Respuesta<Aidis,Responses,Excepcion>> registerUsuarioLogin(@PathVariable int idUser, @RequestBody InsertarCliente ins) {
-		InsertarCliente inst = new InsertarCliente(ins.getaNombre(), ins.getbApellido(), ins.getcTelefono(),
-				ins.getdDni(), ins.geteEmail(), ins.getfDirecion(), ins.getPassword());
+		InsertarCliente inst = new InsertarCliente(ins.getANombre(), ins.getBApellido(), ins.getCTelefono(),
+				ins.getDDni(), ins.getEEmail(), ins.getFDirecion(), ins.getPassword());
 
 		Respuesta<Aidis, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ClienteRepositoryImpl.getInstance().addClienteLogin(inst, idUser); 
 		
-		if(ClienteRepositoryImpl.getInstance().addClienteLogin(inst, idUser).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -190,8 +192,6 @@ public class ClienteController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ClienteServiceImpl.registrarCliente(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ClienteRepositoryImpl.getInstance().addClienteLogin(inst, idUser); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -201,13 +201,15 @@ public class ClienteController {
 	@ResponseBody
 	@ApiOperation("Inicia sesión de un cliente en el aplicativo móvil, devuelve un mensaje de error o confirmación y el identificador del usuario.")
 	public ResponseEntity<Respuesta<MessagenID,Responses,Excepcion>> logInClient(@RequestBody LoginCliente ins) {
-		LoginCliente inst = new LoginCliente(ins.getaDni(), ins.getbPassword());
+		LoginCliente inst = new LoginCliente(ins.getADni(), ins.getBPassword());
 
 		Respuesta<MessagenID, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ClienteRepositoryImpl.getInstance().LogInClient(inst); 
 		
-		if(ClienteRepositoryImpl.getInstance().LogInClient(inst).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -220,8 +222,6 @@ public class ClienteController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ClienteServiceImpl.loginCliente(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ClienteRepositoryImpl.getInstance().LogInClient(inst); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -231,15 +231,17 @@ public class ClienteController {
 	@ResponseBody
 	@ApiOperation("Registra a un cliente en el aplicativo móvil, tomando como parámetro al usuario que lo registra y devuelve mensajes de error o confirmación.")
 	public ResponseEntity<Respuesta<MensajesBeans,Responses,Excepcion>> registerCliente(@RequestBody InsertarCliente ins) {
-		InsertarCliente inst = new InsertarCliente(ins.getaNombre(), ins.getbApellido(), ins.getcTelefono(),
-				ins.getdDni(), ins.geteEmail(), ins.getfDirecion(), ins.getPassword());
+		InsertarCliente inst = new InsertarCliente(ins.getANombre(), ins.getBApellido(), ins.getCTelefono(),
+				ins.getDDni(), ins.getEEmail(), ins.getFDirecion(), ins.getPassword());
 		int idUser = 2;
 
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ClienteRepositoryImpl.getInstance().addCliente(inst, idUser); 
 		
-		if(ClienteRepositoryImpl.getInstance().addCliente(inst, idUser).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -252,8 +254,6 @@ public class ClienteController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ClienteServiceImpl.registrarClienteA(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ClienteRepositoryImpl.getInstance().addCliente(inst, idUser); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -266,8 +266,10 @@ public class ClienteController {
 		Respuesta<RecuperarClienteInterno, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ClienteRepositoryImpl.getInstance().getCliente(id); 
 		
-		if(ClienteRepositoryImpl.getInstance().getCliente(id).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -280,8 +282,6 @@ public class ClienteController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ClienteServiceImpl.recuperarClienteA(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ClienteRepositoryImpl.getInstance().getCliente(id); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -292,14 +292,22 @@ public class ClienteController {
 	@ResponseBody
 	@ApiOperation("Actualiza la información de un cliente dentro del aplicativo móvil y devuelve un mensaje de error o confirmación.")
 	public ResponseEntity<Respuesta<MensajesBeans,Responses,Excepcion>> updateCliente(@PathVariable int id, @RequestBody RecuperarClienteInterno ins) {
-		RecuperarClienteInterno inst = new RecuperarClienteInterno(ins.getIdEstado(), ins.getBnombre(),
-				ins.getCapellido(), ins.getDtelefono(), ins.geteDni(), ins.getFcorreo(), ins.getGdireccion());
+		RecuperarClienteInterno inst = new RecuperarClienteInterno(
+				ins.getBnombre(),
+				ins.getCapellido(), 
+				ins.getDtelefono(), 
+				ins.getEDni(), 
+				ins.getFcorreo(), 
+				ins.getGdireccion(),
+				ins.getIdEstado());
 		int idUser = 2;
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ClienteRepositoryImpl.getInstance().updtClient(id, inst, idUser); 
 		
-		if(ClienteRepositoryImpl.getInstance().updtClient(id, inst, idUser).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -312,8 +320,6 @@ public class ClienteController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ClienteServiceImpl.actualizarClienteA(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ClienteRepositoryImpl.getInstance().updtClient(id, inst, idUser); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -324,13 +330,15 @@ public class ClienteController {
 	@ResponseBody
 	@ApiOperation("Cambia la contraseña de un cliente dentro del aplicativo móvil, devuelve un mensaje de error o confirmación y el identificador.")
 	public ResponseEntity<Respuesta<MessagenID,Responses,Excepcion>> changePassUsr(@PathVariable int id, @RequestBody CambiarClave ins) {
-		CambiarClave inst = new CambiarClave(ins.getApass(), ins.getbNewPass());
+		CambiarClave inst = new CambiarClave(ins.getApass(), ins.getBNewPass());
 
 		Respuesta<MessagenID, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ClienteRepositoryImpl.getInstance().changePass(inst, id); 
 		
-		if(ClienteRepositoryImpl.getInstance().changePass(inst, id).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -343,8 +351,6 @@ public class ClienteController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ClienteServiceImpl.cambairPassCliente(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ClienteRepositoryImpl.getInstance().changePass(inst, id); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -356,14 +362,22 @@ public class ClienteController {
 	@ApiOperation("Actualiza la información de un cliente y devuelve un mensaje de error o confirmación.")
 	public ResponseEntity<Respuesta<MensajesBeans,Responses,Excepcion>> updateClient(@PathVariable int idUser, @PathVariable int id,
 			@RequestBody RecuperarClienteInterno ins) {
-		RecuperarClienteInterno inst = new RecuperarClienteInterno(ins.getIdEstado(), ins.getBnombre(),
-				ins.getCapellido(), ins.getDtelefono(), ins.geteDni(), ins.getFcorreo(), ins.getGdireccion());
+		RecuperarClienteInterno inst = new RecuperarClienteInterno(
+				ins.getBnombre(),
+				ins.getCapellido(), 
+				ins.getDtelefono(), 
+				ins.getEDni(), 
+				ins.getFcorreo(), 
+				ins.getGdireccion(),
+				ins.getIdEstado());
 
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ClienteRepositoryImpl.getInstance().updtClient(id, inst, idUser); 
 		
-		if(ClienteRepositoryImpl.getInstance().updtClient(id, inst, idUser).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -376,8 +390,6 @@ public class ClienteController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ClienteServiceImpl.actualizarCliente(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ClienteRepositoryImpl.getInstance().updtClient(id, inst, idUser); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -391,8 +403,10 @@ public class ClienteController {
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ClienteRepositoryImpl.getInstance().delClient(id); 
 		
-		if(ClienteRepositoryImpl.getInstance().delClient(id).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -405,8 +419,6 @@ public class ClienteController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ClienteServiceImpl.eliminarCliente(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ClienteRepositoryImpl.getInstance().delClient(id); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);

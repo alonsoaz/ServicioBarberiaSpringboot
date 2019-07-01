@@ -55,14 +55,20 @@ public class ReservaController {
 	@ApiOperation("Consulta la disponibilidad de cada barbero de acuerdo con el servicio seleccionado y una fecha seleccionada.")
 	public ResponseEntity<Respuesta<MensajesBeans,Responses,Excepcion>> askBarbero(@RequestBody ConsultaDisponibilidadBarbero ins, @PathVariable int idBarbero,
 			@PathVariable int idClient, @PathVariable int idServicio) {
-		ConsultaDisponibilidadBarbero inst = new ConsultaDisponibilidadBarbero(ins.getbYear(), ins.getcMonth(),
-				ins.getdDay(), ins.geteHour(), ins.getfMinut());
+		ConsultaDisponibilidadBarbero inst = new ConsultaDisponibilidadBarbero(
+				ins.getBYear(), 
+				ins.getCMonth(),
+				ins.getDDay(), 
+				ins.getEHour(), 
+				ins.getFMinut(),0);
 
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ReservasRepositoryImpl.getInstance().askBarbero(inst, idBarbero, idServicio); 
 		
-		if(ReservasRepositoryImpl.getInstance().askBarbero(inst, idBarbero, idServicio).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -75,8 +81,6 @@ public class ReservaController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ReservasServicioImpl.consultarBarbero(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ReservasRepositoryImpl.getInstance().askBarbero(inst, idBarbero, idServicio); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -88,14 +92,20 @@ public class ReservaController {
 	@ApiOperation("Registra una reserva de acuerdo con el servicio  y barbero seleccionados, y una fecha seleccionada.")
 	public ResponseEntity<Respuesta<MessagenID,Responses,Excepcion>> tryBarbero(@RequestBody ConsultaDisponibilidadBarbero ins, @PathVariable int idBarbero,
 			@PathVariable int idClient, @PathVariable int idServicio) {
-		ConsultaDisponibilidadBarbero inst = new ConsultaDisponibilidadBarbero(ins.getbYear(), ins.getcMonth(),
-				ins.getdDay(), ins.geteHour(), ins.getfMinut());
+		ConsultaDisponibilidadBarbero inst = new ConsultaDisponibilidadBarbero(
+				ins.getBYear(), 
+				ins.getCMonth(),
+				ins.getDDay(), 
+				ins.getEHour(), 
+				ins.getFMinut(),0);
 
 		Respuesta<MessagenID, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ReservasRepositoryImpl.getInstance().tryBarbero(inst, idBarbero, idClient, idServicio); 
 		
-		if(ReservasRepositoryImpl.getInstance().tryBarbero(inst, idBarbero, idClient, idServicio).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -108,8 +118,6 @@ public class ReservaController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ReservasServicioImpl.reservarBarbero(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ReservasRepositoryImpl.getInstance().tryBarbero(inst, idBarbero, idClient, idServicio); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -122,8 +130,10 @@ public class ReservaController {
 		Respuesta<ListarReservasPorCliente, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ReservasRepositoryImpl.getInstance().getReservas(idClient); 
 		
-		if(ReservasRepositoryImpl.getInstance().getReservas(idClient).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -136,8 +146,6 @@ public class ReservaController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ReservasServicioImpl.listarReservasporCliente(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ReservasRepositoryImpl.getInstance().getReservas(idClient); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -151,8 +159,10 @@ public class ReservaController {
 		Respuesta<BuscarReservaPorCliente, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ReservasRepositoryImpl.getInstance().getReserva(idClient, idReserva); 
 		
-		if(ReservasRepositoryImpl.getInstance().getReserva(idClient, idReserva).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -165,8 +175,6 @@ public class ReservaController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ReservasServicioImpl.recuperarReservasporCliente(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ReservasRepositoryImpl.getInstance().getReserva(idClient, idReserva); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -180,8 +188,10 @@ public class ReservaController {
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ReservasRepositoryImpl.getInstance().delReserva(idClient, idReserva); 
 		
-		if(ReservasRepositoryImpl.getInstance().delReserva(idClient, idReserva).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -194,8 +204,6 @@ public class ReservaController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ReservasServicioImpl.eliminarReservaporCliente(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ReservasRepositoryImpl.getInstance().delReserva(idClient, idReserva); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
@@ -209,8 +217,10 @@ public class ReservaController {
 		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
         Responses responses = null;
 		List<Responses> lista = new ArrayList<>();
+
+		rpt.lista = ReservasRepositoryImpl.getInstance().payReserva(idClient, idReserva); 
 		
-		if(ReservasRepositoryImpl.getInstance().payReserva(idClient, idReserva).size()==0) 
+		if(rpt.lista.size()==0) 
 		{
 		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
 		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
@@ -223,8 +233,6 @@ public class ReservaController {
 		
 		lista.add(new Responses(HttpStatus.OK.toString().trim()));
 	    rpt.excepcion=ReservasServicioImpl.pagarReservasporCliente(HttpStatus.OK.toString().trim());
-
-		rpt.lista = ReservasRepositoryImpl.getInstance().payReserva(idClient, idReserva); 
 		rpt.response = lista;
 		
 		return new ResponseEntity<>(rpt,HttpStatus.OK);
