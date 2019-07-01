@@ -1,11 +1,13 @@
-package com.barberia.model;
+package com.barberia.repositoryImpl;
 
 import com.barberia.config.ConexionBD;
-import com.barberia.entity.InsertarMarca;
-import com.barberia.entity.ListarMarca;
+import com.barberia.entity.InsertarTipo;
+import com.barberia.entity.ListarTipoProducto;
 import com.barberia.entity.MensajesBeans;
 import com.barberia.entity.MessagenID;
-import com.barberia.entity.RecuperarMarcaInterno;
+import com.barberia.entity.RecuperarTipoProducto;
+import com.barberia.repository.TipoProductoRepository;
+
 import java.io.PrintStream;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -15,8 +17,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 @org.springframework.stereotype.Repository
-public class MarcaProductoModel
+public class TipoProductoRepositoryImpl implements TipoProductoRepository
 {
   private ConexionBD dbCon;
   private Connection conn;
@@ -28,25 +32,27 @@ public class MarcaProductoModel
   private List<com.barberia.entity.Aidis> aidi = new ArrayList();
   private List<MessagenID> mesgid = new ArrayList();
   
-  private List<ListarMarca> MarcaProductoR;
+  private List<ListarTipoProducto> TipoProductoR;
   
-  private List<RecuperarMarcaInterno> MarcaProductoGet;
-  private static MarcaProductoModel stdregd = null;
+  private List<RecuperarTipoProducto> TipoProductoGet;
+  private static TipoProductoRepositoryImpl stdregd = null;
+
+	private final Logger LOG = Logger.getLogger(this.getClass());
   
-  public MarcaProductoModel() {}
+  public TipoProductoRepositoryImpl() {}
   
-  public static MarcaProductoModel getInstance() { if (stdregd == null) {
-      stdregd = new MarcaProductoModel();
+  public static TipoProductoRepositoryImpl getInstance() { if (stdregd == null) {
+      stdregd = new TipoProductoRepositoryImpl();
       return stdregd;
     }
     
     return stdregd;
   }
   
-
-  public List<ListarMarca> getMarcaProductoR()
+  @Override
+  public List<ListarTipoProducto> getTipoProductoR()
   {
-    MarcaProductoR = new ArrayList();
+    TipoProductoR = new ArrayList();
     try
     {
       dbCon = new ConexionBD();
@@ -55,40 +61,25 @@ public class MarcaProductoModel
     }
     
 
-    String SQLQuery = "call `sp.Listar_Marca_Interno`";
+    String SQLQuery = "call `sp.Listar_TipoProducto_Interno`";
+	LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
     try
     {
       conn = ConexionBD.setDBConnection();
       ResultSet rslt = dbCon.getResultSet(SQLQuery, conn);
       while (rslt.next()) {
-        MarcaProductoR.add(new ListarMarca(rslt
+        TipoProductoR.add(new ListarTipoProducto(rslt
           .getInt(1), rslt
           .getString(2), rslt
-          .getString(3), rslt
-          .getString(4)));
+          .getString(3)));
       }
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      return MarcaProductoR;
+  	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
+      return TipoProductoR;
     }
     catch (SQLException e)
     {
       e.printStackTrace();
+		LOG.error("Error en la ejecución: "+e.getMessage());
     }
     finally {
       if (conn != null) {
@@ -97,28 +88,25 @@ public class MarcaProductoModel
           conn.close();
         } catch (SQLException e) {
           e.printStackTrace();
+			LOG.error("Error de conexión: "+e.getMessage());
         }
       }
     }
-	return MarcaProductoR;
+	return TipoProductoR;
   }
-  
 
-
-
-
-  public List<RecuperarMarcaInterno> getMarcaProducto(int id)
+  @Override
+  public List<RecuperarTipoProducto> getTipoProducto(int id)
   {
-    MarcaProductoGet = new ArrayList();
+    TipoProductoGet = new ArrayList();
     try
     {
       dbCon = new ConexionBD();
     } catch (SQLException e) {
       e.printStackTrace();
-    }
-    
-
-    String SQLQuery = "{call `sp.Recuperar_Marca_Interno`(?)}";
+    } 
+    String SQLQuery = "{call `sp.Recuperar_TipoProducto_Interno`(?)}";
+	LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
     try
     {
       conn = ConexionBD.setDBConnection();
@@ -126,32 +114,17 @@ public class MarcaProductoModel
       stmt.setInt(1, id);
       ResultSet rslt = stmt.executeQuery();
       while (rslt.next()) {
-        MarcaProductoGet.add(new RecuperarMarcaInterno(rslt
+        TipoProductoGet.add(new RecuperarTipoProducto(rslt
           .getString(1), rslt
           .getInt(2)));
       }
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      return MarcaProductoGet;
+  	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
+      return TipoProductoGet;
     }
     catch (SQLException e)
     {
       e.printStackTrace();
+		LOG.error("Error en la ejecución: "+e.getMessage());
     }
     finally {
       if (conn != null) {
@@ -160,20 +133,20 @@ public class MarcaProductoModel
           conn.close();
         } catch (SQLException e) {
           e.printStackTrace();
+			LOG.error("Error de conexión: "+e.getMessage());
         }
       }
     }
-	return MarcaProductoGet;
+	return TipoProductoGet;
   }
   
-
-
-
-
-  public MensajesBeans addMarcaProducto(InsertarMarca ins, int idUsuario)
+  @Override
+  public List<MensajesBeans> addTipoProducto(InsertarTipo ins, int idUsuario)
   {
-    String SQLQuery = "{call `sp.Insertar_Marca_Producto`(?)}";
-    String p = "";
+    mensaje = new ArrayList();
+    
+    String SQLQuery = "{call `sp.Insertar_Tipo_Producto`(?)}";
+	LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
     try {
       dbCon = new ConexionBD();
     } catch (SQLException e) {
@@ -182,95 +155,22 @@ public class MarcaProductoModel
     try {
       conn = ConexionBD.setDBConnection();
       clbl = conn.prepareCall(SQLQuery);
-      clbl.setString(1, ins.getMarca());
+      clbl.setString(1, ins.getTipo());
       rslt = clbl.executeQuery();
-      System.out.println(rslt.next());
       
-
-      mensaj = new MensajesBeans(rslt.getString(1));
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      return mensaj;
-    }
-    catch (SQLException e)
-    {
-      e.printStackTrace();
-    }
-    finally {
-      if (conn != null) {
-        try
-        {
-          conn.close();
-        } catch (SQLException e) {
-          e.printStackTrace();
-        }
-      }
-    }
-	return mensaj;
-  }
-  
-
-
-
-
-
-  public List<MensajesBeans> updtMarcaProducto(int idMarcaProducto, RecuperarMarcaInterno ins)
-  {
-    mensaje = new ArrayList();
-    
-    String SQLQuery = "{call `sp.Actualizar_Marca_Producto`(?,?,?)}";
-    try {
-      dbCon = new ConexionBD();
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-    try {
-      conn = ConexionBD.setDBConnection();
-      stmt = conn.prepareCall(SQLQuery);
-      stmt.setInt(1, idMarcaProducto);
-      stmt.setString(2, ins.getCmarca());
-      stmt.setInt(3, ins.getDidEstado());
-      rslt = stmt.executeQuery();
       rslt.beforeFirst();
       while (rslt.next()) {
-        mensaje.add(new MensajesBeans(rslt.getString(1)));
-      }
       
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+      mensaje.add(new MensajesBeans(rslt.getString(1)));
+      
+      }
+  	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
       return mensaje;
     }
     catch (SQLException e)
     {
       e.printStackTrace();
+		LOG.error("Error de conexión: "+e.getMessage());
     }
     finally {
       if (conn != null) {
@@ -279,22 +179,20 @@ public class MarcaProductoModel
           conn.close();
         } catch (SQLException e) {
           e.printStackTrace();
+			LOG.error("Error de conexión: "+e.getMessage());
         }
       }
     }
 	return mensaje;
   }
-  
-
-
-
-
-
-  public List<MensajesBeans> delMarcaProducto(int idMarcaProducto)
+   
+  @Override
+  public List<MensajesBeans> updtTipoProducto(int idTipoProducto, RecuperarTipoProducto ins)
   {
     mensaje = new ArrayList();
     
-    String SQLQuery = "{call `sp.Eliminar_MarcaProducto`(?)}";
+    String SQLQuery = "{call `sp.Actualizar_Tipo_Producto`(?,?,?)}";
+	LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
     try {
       dbCon = new ConexionBD();
     } catch (SQLException e) {
@@ -303,17 +201,21 @@ public class MarcaProductoModel
     try {
       conn = ConexionBD.setDBConnection();
       stmt = conn.prepareCall(SQLQuery);
-      stmt.setInt(1, idMarcaProducto);
+      stmt.setInt(1, idTipoProducto);
+      stmt.setString(2, ins.getbTipo());
+      stmt.setInt(3, ins.getCidEstado());
       rslt = stmt.executeQuery();
       rslt.beforeFirst();
       while (rslt.next()) {
         mensaje.add(new MensajesBeans(rslt.getString(1)));
-      }
-       return mensaje;
+      } 
+  	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
+      return mensaje;
     }
     catch (SQLException e)
     {
       e.printStackTrace();
+		LOG.error("Error en la ejecución: "+e.getMessage());
     }
     finally {
       if (conn != null) {
@@ -322,6 +224,50 @@ public class MarcaProductoModel
           conn.close();
         } catch (SQLException e) {
           e.printStackTrace();
+			LOG.error("Error de conexión: "+e.getMessage());
+        }
+      }
+    }
+	return mensaje;
+  }
+   
+  @Override
+  public List<MensajesBeans> delTipoProducto(int idTipoProducto)
+  {
+    mensaje = new ArrayList();
+    
+    String SQLQuery = "{call `sp.Eliminar_Tipo_Producto`(?)}";
+	LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
+    try {
+      dbCon = new ConexionBD();
+    } catch (SQLException e) {
+      e.printStackTrace();
+    }
+    try {
+      conn = ConexionBD.setDBConnection();
+      stmt = conn.prepareCall(SQLQuery);
+      stmt.setInt(1, idTipoProducto);
+      rslt = stmt.executeQuery();
+      rslt.beforeFirst();
+      while (rslt.next()) {
+        mensaje.add(new MensajesBeans(rslt.getString(1)));
+      }
+  	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
+      return mensaje;
+    }
+    catch (SQLException e)
+    {
+      e.printStackTrace();
+		LOG.error("Error en la ejecución: "+e.getMessage());
+    }
+    finally {
+      if (conn != null) {
+        try
+        {
+          conn.close();
+        } catch (SQLException e) {
+          e.printStackTrace();
+			LOG.error("Error de conexión: "+e.getMessage());
         }
       }
     }

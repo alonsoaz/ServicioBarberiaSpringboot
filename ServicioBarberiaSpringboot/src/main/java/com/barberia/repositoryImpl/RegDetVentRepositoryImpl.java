@@ -1,12 +1,15 @@
-package com.barberia.model;
+package com.barberia.repositoryImpl;
 
 import com.barberia.config.ConexionBD;
 import com.barberia.entity.MensajesBeans;
 import com.barberia.entity.MessagenID;
+import com.barberia.entity.MostrarDetalleVenta;
 import com.barberia.entity.MostrarDetalleVentaPagada;
 import com.barberia.entity.MostrarVentaPagada;
 import com.barberia.entity.RecuperarDetalleVenta;
 import com.barberia.entity.RegistrarDetalleVentaXpAgar;
+import com.barberia.repository.RegDetVentRepository;
+
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,8 +18,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 @org.springframework.stereotype.Repository
-public class RegDetVentModel {
+public class RegDetVentRepositoryImpl implements RegDetVentRepository{
 	private ConexionBD dbCon;
 	private Connection conn;
 	private ResultSet rslt;
@@ -32,24 +37,27 @@ public class RegDetVentModel {
 	private List<RecuperarDetalleVenta> getDetVenta;
 	private List<MostrarVentaPagada> ShowVpagada;
 	private List<MostrarDetalleVentaPagada> ShowDVpagada;
-	private static RegDetVentModel stdregd = null;
+	private static RegDetVentRepositoryImpl stdregd = null;
+	private final Logger LOG = Logger.getLogger(this.getClass());
 
-	public RegDetVentModel() {
+	public RegDetVentRepositoryImpl() {
 	}
 
-	public static RegDetVentModel getInstance() {
+	public static RegDetVentRepositoryImpl getInstance() {
 		if (stdregd == null) {
-			stdregd = new RegDetVentModel();
+			stdregd = new RegDetVentRepositoryImpl();
 			return stdregd;
 		}
 
 		return stdregd;
 	}
 
+	@Override
 	public List<MessagenID> regDetVent(RegistrarDetalleVentaXpAgar ins, int idClient, int idProd) {
 		mesgid = new ArrayList();
 
 		String SQLQuery = "{call `sp.Registrar_Detalle_Venta_Por_Pagar`(?,?,?,?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			dbCon = new ConexionBD();
 		} catch (SQLException e) {
@@ -68,21 +76,25 @@ public class RegDetVentModel {
 				mesgid.add(new MessagenID(rslt.getString(1), clbl.getInt(4)));
 			}
 
+	    	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
 			return mesgid;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error en la ejecución: "+e.getMessage());
 		} finally {
 			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 			}
 		}
 		return mesgid;
 	}
 
+	@Override
 	public List<com.barberia.entity.MostrarVentaPorPagar> showVentaXpagar(int idClient) {
 		ShowVxPagar = new ArrayList();
 		try {
@@ -92,6 +104,7 @@ public class RegDetVentModel {
 		}
 
 		String SQLQuery = "{call `sp.Mostrar_Venta_Por_Pagar`(?,?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			conn = ConexionBD.setDBConnection();
 			clbl = conn.prepareCall(SQLQuery);
@@ -103,25 +116,30 @@ public class RegDetVentModel {
 						rslt.getString(3), rslt.getString(4), rslt.getDouble(5), rslt.getString(6), clbl.getInt(2)));
 			}
 
+	    	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
 			return ShowVxPagar;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error en la ejecución: "+e.getMessage());
 		} finally {
 			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 			}
 		}
 		return ShowVxPagar;
 	}
 
+	@Override
 	public List<MensajesBeans> delVenta(int idCliente) {
 		mensaje = new ArrayList();
 
 		String SQLQuery = "{call `sp.Eliminar_Venta`(?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			dbCon = new ConexionBD();
 		} catch (SQLException e) {
@@ -137,25 +155,30 @@ public class RegDetVentModel {
 				mensaje.add(new MensajesBeans(rslt.getString(1)));
 			}
 
+	    	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
 			return mensaje;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error en la ejecución: "+e.getMessage());
 		} finally {
 			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 			}
 		}
 		return mensaje;
 	}
 
+	@Override
 	public List<MensajesBeans> payVenta(int idCliente) {
 		mensaje = new ArrayList();
 
 		String SQLQuery = "{call `sp.Registrar_Venta_Pagada`(?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			dbCon = new ConexionBD();
 		} catch (SQLException e) {
@@ -171,22 +194,26 @@ public class RegDetVentModel {
 				mensaje.add(new MensajesBeans(rslt.getString(1)));
 			}
 
+	    	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
 			return mensaje;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error en la ejecución: "+e.getMessage());
 		} finally {
 			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 			}
 		}
 		return mensaje;
 	}
 
-	public List<com.barberia.entity.MostrarDetalleVenta> ShowDVxPagar(int idCliente) {
+	@Override
+	public List<MostrarDetalleVenta> ShowDVxPagar(int idCliente) {
 		ShowDVxPagar = new ArrayList();
 		try {
 			dbCon = new ConexionBD();
@@ -195,6 +222,7 @@ public class RegDetVentModel {
 		}
 
 		String SQLQuery = "{call `sp.Mostrar_Detalle_Venta`(?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			conn = ConexionBD.setDBConnection();
 			stmt = conn.prepareStatement(SQLQuery);
@@ -207,21 +235,24 @@ public class RegDetVentModel {
 						rslt.getDouble(12), rslt.getInt(13), rslt.getDouble(14), rslt.getDouble(15)));
 			}
 
+	    	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
 			return ShowDVxPagar;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			e.printStackTrace();LOG.error("Error en la ejecución: "+e.getMessage());
 		} finally {
 			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 			}
 		}
 		return ShowDVxPagar;
 	}
 
+	@Override
 	public List<RecuperarDetalleVenta> getDV(int id) {
 		getDetVenta = new ArrayList();
 		try {
@@ -231,6 +262,7 @@ public class RegDetVentModel {
 		}
 
 		String SQLQuery = "{call `sp.Recuperar_Detalle_Venta`(?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			conn = ConexionBD.setDBConnection();
 			stmt = conn.prepareStatement(SQLQuery);
@@ -240,26 +272,30 @@ public class RegDetVentModel {
 				getDetVenta.add(new RecuperarDetalleVenta(rslt.getInt(1), rslt.getDouble(2), rslt.getInt(3),
 						rslt.getDouble(4), rslt.getDouble(5)));
 			}
-
+			LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
 			return getDetVenta;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error en la ejecución: "+e.getMessage());
 		} finally {
 			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 			}
 		}
 		return getDetVenta;
 	}
 
+	@Override
 	public List<MensajesBeans> updtDetVent(int idDetVent, RegistrarDetalleVentaXpAgar ins) {
 		mensaje = new ArrayList();
 
 		String SQLQuery = "{call `sp.Actualizar_Detalle_Venta`(?,?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			dbCon = new ConexionBD();
 		} catch (SQLException e) {
@@ -275,26 +311,31 @@ public class RegDetVentModel {
 			while (rslt.next()) {
 				mensaje.add(new MensajesBeans(rslt.getString(1)));
 			}
+			LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
 
 			return mensaje;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error en la ejecución: "+e.getMessage());
 		} finally {
 			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 			}
 		}
 		return mensaje;
 	}
 
+	@Override
 	public List<MensajesBeans> delDV(int idDetVent) {
 		mensaje = new ArrayList();
 
 		String SQLQuery = "{call `sp.Eliminar_Detalle_Venta`(?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			dbCon = new ConexionBD();
 		} catch (SQLException e) {
@@ -310,25 +351,30 @@ public class RegDetVentModel {
 				mensaje.add(new MensajesBeans(rslt.getString(1)));
 			}
 
+			LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
 			return mensaje;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error en la ejecución: "+e.getMessage());
 		} finally {
 			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 			}
 		}
 		return mensaje;
 	}
 
+	@Override
 	public List<MensajesBeans> payDetVenta(int idCliente, int idDetVenta) {
 		mensaje = new ArrayList();
 
 		String SQLQuery = "{call `sp.Registrar_Detalle_Venta_Pagada`(?,?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			dbCon = new ConexionBD();
 		} catch (SQLException e) {
@@ -345,21 +391,25 @@ public class RegDetVentModel {
 				mensaje.add(new MensajesBeans(rslt.getString(1)));
 			}
 
+			LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
 			return mensaje;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error en la ejecución: "+e.getMessage());
 		} finally {
 			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 			}
 		}
 		return mensaje;
 	}
 
+	@Override
 	public List<MostrarVentaPagada> showVentaPagada(int idClient) {
 		ShowVpagada = new ArrayList();
 		try {
@@ -369,6 +419,7 @@ public class RegDetVentModel {
 		}
 
 		String SQLQuery = "{call `sp.Mostrar_Venta_Pagada`(?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			conn = ConexionBD.setDBConnection();
 			clbl = conn.prepareCall(SQLQuery);
@@ -379,21 +430,25 @@ public class RegDetVentModel {
 						rslt.getString(4), rslt.getString(5), rslt.getDouble(6), rslt.getString(7)));
 			}
 
+			LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
 			return ShowVpagada;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error en la ejecución: "+e.getMessage());
 		} finally {
 			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 			}
 		}
 		return ShowVpagada;
 	}
 
+	@Override
 	public List<MostrarDetalleVentaPagada> showDetVentaPagada(int idClient, int idVenta) {
 		ShowDVpagada = new ArrayList();
 		try {
@@ -403,6 +458,7 @@ public class RegDetVentModel {
 		}
 
 		String SQLQuery = "{call `sp.Mostrar_Detalle_Venta_Pagada`(?,?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			conn = ConexionBD.setDBConnection();
 			clbl = conn.prepareCall(SQLQuery);
@@ -415,15 +471,18 @@ public class RegDetVentModel {
 						rslt.getString(9), rslt.getDouble(10), rslt.getInt(11), rslt.getDouble(12),
 						rslt.getDouble(13)));
 			}
+			LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
 			return ShowDVpagada;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error en la ejecución: "+e.getMessage());
 		} finally {
 			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 			}
 		}

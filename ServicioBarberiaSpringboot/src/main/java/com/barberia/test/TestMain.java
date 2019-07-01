@@ -2,7 +2,8 @@ package com.barberia.test;
 
 import com.barberia.entity.InsertarServicio;
 import com.barberia.entity.MensajesBeans;
-import com.barberia.model.ServicioModel;
+import com.barberia.repositoryImpl.ServicioRepositoryImpl;
+
 import java.io.PrintStream;
 import java.util.List;
 
@@ -15,6 +16,6 @@ public class TestMain {
 
 		System.out.println(
 
-				((MensajesBeans) ServicioModel.getInstance().addServicio(ins, 1).get(0)).getMensaje());
+				((MensajesBeans) ServicioRepositoryImpl.getInstance().addServicio(ins, 1).get(0)).getMensaje());
 	}
 }

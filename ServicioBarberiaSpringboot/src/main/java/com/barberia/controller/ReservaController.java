@@ -1,12 +1,26 @@
 package com.barberia.controller;
 
+import com.barberia.serviceImpl.ReservasServicioImpl;
+import com.barberia.entity.BuscarReservaPorCliente;
 import com.barberia.entity.ConsultaDisponibilidadBarbero;
 import com.barberia.entity.ListarReservasPorCliente;
 import com.barberia.entity.MensajesBeans;
 import com.barberia.entity.MessagenID;
-import com.barberia.model.ReservasModel;
+import com.barberia.repositoryImpl.ReservasRepositoryImpl;
+import com.barberia.response.Excepcion;
+import com.barberia.response.Responses;
+import com.barberia.response.Respuesta;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,60 +33,200 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(path = { "/reserva" })
+@Api(value="Rest de Reservas")
 public class ReservaController {
-	@Autowired
-	private ReservasModel ReservasModel;
+	
 
-	public ReservaController(ReservasModel ReservasModel) {
-		this.ReservasModel = ReservasModel;
+	private final Logger LOG = Logger.getLogger(this.getClass());
+	
+	@Autowired
+	private ReservasServicioImpl ReservasServicioImpl; 
+	
+	@Autowired
+	private ReservasRepositoryImpl ReservasRepositoryImpl;
+
+	public ReservaController(ReservasRepositoryImpl ReservasRepositoryImpl) {
+		this.ReservasRepositoryImpl = ReservasRepositoryImpl;
 	}
 
 	@PostMapping(value = { "/{idClient}/android/barbero/{idBarbero}/consulta/{idServicio}" }, produces = {
 			"application/json" }, consumes = { "application/json" })
 	@ResponseBody
-	public List<MensajesBeans> askBarbero(@RequestBody ConsultaDisponibilidadBarbero ins, @PathVariable int idBarbero,
+	@ApiOperation("Consulta la disponibilidad de cada barbero de acuerdo con el servicio seleccionado y una fecha seleccionada.")
+	public ResponseEntity<Respuesta<MensajesBeans,Responses,Excepcion>> askBarbero(@RequestBody ConsultaDisponibilidadBarbero ins, @PathVariable int idBarbero,
 			@PathVariable int idClient, @PathVariable int idServicio) {
 		ConsultaDisponibilidadBarbero inst = new ConsultaDisponibilidadBarbero(ins.getbYear(), ins.getcMonth(),
 				ins.getdDay(), ins.geteHour(), ins.getfMinut());
 
-		return ReservasModel.getInstance().askBarbero(inst, idBarbero, idServicio);
+		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(ReservasRepositoryImpl.getInstance().askBarbero(inst, idBarbero, idServicio).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=ReservasServicioImpl.consultarBarbero(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=ReservasServicioImpl.consultarBarbero(HttpStatus.OK.toString().trim());
+
+		rpt.lista = ReservasRepositoryImpl.getInstance().askBarbero(inst, idBarbero, idServicio); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@PostMapping(value = { "/{idClient}/android/barbero/{idBarbero}/registro/{idServicio}" }, produces = {
 			"application/json" }, consumes = { "application/json" })
 	@ResponseBody
-	public List<MessagenID> tryBarbero(@RequestBody ConsultaDisponibilidadBarbero ins, @PathVariable int idBarbero,
+	@ApiOperation("Registra una reserva de acuerdo con el servicio  y barbero seleccionados, y una fecha seleccionada.")
+	public ResponseEntity<Respuesta<MessagenID,Responses,Excepcion>> tryBarbero(@RequestBody ConsultaDisponibilidadBarbero ins, @PathVariable int idBarbero,
 			@PathVariable int idClient, @PathVariable int idServicio) {
 		ConsultaDisponibilidadBarbero inst = new ConsultaDisponibilidadBarbero(ins.getbYear(), ins.getcMonth(),
 				ins.getdDay(), ins.geteHour(), ins.getfMinut());
 
-		return ReservasModel.getInstance().tryBarbero(inst, idBarbero, idClient, idServicio);
+		Respuesta<MessagenID, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(ReservasRepositoryImpl.getInstance().tryBarbero(inst, idBarbero, idClient, idServicio).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=ReservasServicioImpl.reservarBarbero(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=ReservasServicioImpl.reservarBarbero(HttpStatus.OK.toString().trim());
+
+		rpt.lista = ReservasRepositoryImpl.getInstance().tryBarbero(inst, idBarbero, idClient, idServicio); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@GetMapping(value = { "/{idClient}/android/allreservas" }, produces = { "application/json" })
 	@ResponseBody
-	public List<ListarReservasPorCliente> getReservas(@PathVariable int idClient) {
-		return ReservasModel.getInstance().getReservas(idClient);
+	@ApiOperation("Retorna la Lista de todos las reservas por cliente.")
+	public ResponseEntity<Respuesta<ListarReservasPorCliente,Responses,Excepcion>> getReservas(@PathVariable int idClient) {
+		Respuesta<ListarReservasPorCliente, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(ReservasRepositoryImpl.getInstance().getReservas(idClient).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=ReservasServicioImpl.listarReservasporCliente(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=ReservasServicioImpl.listarReservasporCliente(HttpStatus.OK.toString().trim());
+
+		rpt.lista = ReservasRepositoryImpl.getInstance().getReservas(idClient); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@GetMapping(value = { "/{idClient}/android/{idReserva}" }, produces = { "application/json" })
 	@ResponseBody
-	public List<com.barberia.entity.BuscarReservaPorCliente> getReserva(@PathVariable int idClient,
+	@ApiOperation("Retorna un sólo registro de acuerdo con su identificador para el cliente móvil.")
+	public ResponseEntity<Respuesta<BuscarReservaPorCliente,Responses,Excepcion>> getReserva(@PathVariable int idClient,
 			@PathVariable int idReserva) {
-		return ReservasModel.getInstance().getReserva(idClient, idReserva);
+		Respuesta<BuscarReservaPorCliente, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(ReservasRepositoryImpl.getInstance().getReserva(idClient, idReserva).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=ReservasServicioImpl.recuperarReservasporCliente(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=ReservasServicioImpl.recuperarReservasporCliente(HttpStatus.OK.toString().trim());
+
+		rpt.lista = ReservasRepositoryImpl.getInstance().getReserva(idClient, idReserva); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@PostMapping(value = {"/{idClient}/android/{idReserva}/delete" }, produces = {
 					"application/json" }, consumes = { "application/json" })
 	@ResponseBody
-	public List<MensajesBeans> delReserva(@PathVariable int idClient, @PathVariable int idReserva) {
-		return ReservasModel.getInstance().delReserva(idClient, idReserva);
+	@ApiOperation("Elimina una reserva.")	
+	public ResponseEntity<Respuesta<MensajesBeans,Responses,Excepcion>> delReserva(@PathVariable int idClient, @PathVariable int idReserva) {
+		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(ReservasRepositoryImpl.getInstance().delReserva(idClient, idReserva).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=ReservasServicioImpl.eliminarReservaporCliente(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=ReservasServicioImpl.eliminarReservaporCliente(HttpStatus.OK.toString().trim());
+
+		rpt.lista = ReservasRepositoryImpl.getInstance().delReserva(idClient, idReserva); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@PostMapping(value = { "/{idClient}/android/{idReserva}/pay" }, produces = {
 			"application/json" }, consumes = { "application/json" })
 	@ResponseBody
-	public List<MensajesBeans> payReserva(@PathVariable int idClient, @PathVariable int idReserva) {
-		return ReservasModel.getInstance().payReserva(idClient, idReserva);
+	@ApiOperation("Paga una reserva.")	
+	public ResponseEntity<Respuesta<MensajesBeans,Responses,Excepcion>> payReserva(@PathVariable int idClient, @PathVariable int idReserva) {
+		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(ReservasRepositoryImpl.getInstance().payReserva(idClient, idReserva).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=ReservasServicioImpl.pagarReservasporCliente(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=ReservasServicioImpl.pagarReservasporCliente(HttpStatus.OK.toString().trim());
+
+		rpt.lista = ReservasRepositoryImpl.getInstance().payReserva(idClient, idReserva); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 }

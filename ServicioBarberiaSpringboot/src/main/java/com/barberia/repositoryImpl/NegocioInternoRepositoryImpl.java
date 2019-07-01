@@ -1,4 +1,4 @@
-package com.barberia.model;
+package com.barberia.repositoryImpl;
 
 import com.barberia.config.ConexionBD;
 import com.barberia.entity.ListarReservasPorBarberoInterno;
@@ -6,6 +6,8 @@ import com.barberia.entity.ListarReservasPorClienteInterno;
 import com.barberia.entity.MessagenID;
 import com.barberia.entity.MostrarDetalleVentaInterno;
 import com.barberia.entity.MostrarVentaInterno;
+import com.barberia.repository.NegocioInternoRepository;
+
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,8 +17,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 @org.springframework.stereotype.Repository
-public class NegocioInternoModel
+public class NegocioInternoRepositoryImpl implements NegocioInternoRepository
 {
   private ConexionBD dbCon;
   private Connection conn;
@@ -32,12 +36,13 @@ public class NegocioInternoModel
   private List<MostrarDetalleVentaInterno> ShowDetVenta;
   private List<ListarReservasPorClienteInterno> ShowResCliente;
   private List<ListarReservasPorBarberoInterno> ShowResBarbero;
-  private static NegocioInternoModel stdregd = null;
+  private static NegocioInternoRepositoryImpl stdregd = null;
+	private final Logger LOG = Logger.getLogger(this.getClass());
   
-  public NegocioInternoModel() {}
+  public NegocioInternoRepositoryImpl() {}
   
-  public static NegocioInternoModel getInstance() { if (stdregd == null) {
-      stdregd = new NegocioInternoModel();
+  public static NegocioInternoRepositoryImpl getInstance() { if (stdregd == null) {
+      stdregd = new NegocioInternoRepositoryImpl();
       return stdregd;
     }
     
@@ -45,6 +50,7 @@ public class NegocioInternoModel
   }
   
 
+  @Override
   public List<MostrarVentaInterno> getVenta()
   {
     ShowVenta = new ArrayList();
@@ -57,6 +63,7 @@ public class NegocioInternoModel
     
 
     String SQLQuery = "call `sp.Mostrar_Venta_Interno`";
+	LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
     try
     {
       conn = ConexionBD.setDBConnection();
@@ -72,28 +79,16 @@ public class NegocioInternoModel
           .getDouble(6), rslt
           .getString(7)));
       }
-      
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
+		
       return ShowVenta;
     }
     catch (SQLException e)
     {
       e.printStackTrace();
+		LOG.error("Error en la ejecución: "+e.getMessage());
     }
     finally {
       if (conn != null) {
@@ -102,6 +97,7 @@ public class NegocioInternoModel
           conn.close();
         } catch (SQLException e) {
           e.printStackTrace();
+			LOG.error("Error de conexión: "+e.getMessage());
         }
       }
     }
@@ -112,6 +108,7 @@ public class NegocioInternoModel
 
 
 
+  @Override
   public List<MostrarDetalleVentaInterno> getDetVenta(int idVenta)
   {
     ShowDetVenta = new ArrayList();
@@ -124,6 +121,7 @@ public class NegocioInternoModel
     
 
     String SQLQuery = "call `sp.Mostrar_Detalle_Venta_Interno`(?)";
+    LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
     try
     {
       conn = ConexionBD.setDBConnection();
@@ -148,28 +146,15 @@ public class NegocioInternoModel
           .getDouble(14), rslt
           .getDouble(15)));
       }
-      
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
+		
       return ShowDetVenta;
     }
     catch (SQLException e)
     {
       e.printStackTrace();
+		LOG.error("Error en la ejecución: "+e.getMessage());
     }
     finally {
       if (conn != null) {
@@ -178,6 +163,7 @@ public class NegocioInternoModel
           conn.close();
         } catch (SQLException e) {
           e.printStackTrace();
+			LOG.error("Error de conexión: "+e.getMessage());
         }
       }
     }
@@ -188,6 +174,7 @@ public class NegocioInternoModel
 
 
 
+  @Override
   public List<ListarReservasPorClienteInterno> getResCliente(int idCliente)
   {
     ShowResCliente = new ArrayList();
@@ -200,6 +187,7 @@ public class NegocioInternoModel
     
 
     String SQLQuery = "call `sp.Listar_Reservas_Por_Cliente_Interno`(?)";
+    LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
     try
     {
       conn = ConexionBD.setDBConnection();
@@ -224,31 +212,16 @@ public class NegocioInternoModel
             .getString(6), rslt
             .getString(7)));
         }
-      }
-      
+	      }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
+		
       return ShowResCliente;
     }
     catch (SQLException e)
     {
       e.printStackTrace();
+		LOG.error("Error en la ejecución: "+e.getMessage());
     }
     finally {
       if (conn != null) {
@@ -257,6 +230,7 @@ public class NegocioInternoModel
           conn.close();
         } catch (SQLException e) {
           e.printStackTrace();
+			LOG.error("Error de conexión: "+e.getMessage());
         }
       }
     }
@@ -267,6 +241,7 @@ public class NegocioInternoModel
 
 
 
+  @Override
   public List<ListarReservasPorBarberoInterno> getResBarbero(int idBarbero)
   {
     ShowResBarbero = new ArrayList();
@@ -279,6 +254,7 @@ public class NegocioInternoModel
     
 
     String SQLQuery = "call `sp.Listar_Reservas_Por_Barbero_Interno`(?)";
+    LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
     try
     {
       conn = ConexionBD.setDBConnection();
@@ -303,11 +279,15 @@ public class NegocioInternoModel
             .getString(6), rslt
             .getString(7)));
         }
+
+    	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
+		
       } return ShowResBarbero;
     }
     catch (SQLException e)
     {
       e.printStackTrace();
+		LOG.error("Error en la ejecución: "+e.getMessage());
     }
     finally {
       if (conn != null) {
@@ -316,6 +296,7 @@ public class NegocioInternoModel
           conn.close();
         } catch (SQLException e) {
           e.printStackTrace();
+			LOG.error("Error de conexión: "+e.getMessage());
         }
       }
     }

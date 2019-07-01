@@ -1,13 +1,28 @@
 package com.barberia.controller;
 
+import com.barberia.entity.BuscarServicio;
 import com.barberia.entity.BuscarServicioInterno;
 import com.barberia.entity.InsertarServicio;
 import com.barberia.entity.ListarServicio;
+import com.barberia.entity.ListarServicioInterno;
 import com.barberia.entity.MensajesBeans;
 import com.barberia.entity.RecuperarServicioInterno;
-import com.barberia.model.ServicioModel;
+import com.barberia.repositoryImpl.ServicioRepositoryImpl;
+import com.barberia.response.Excepcion;
+import com.barberia.response.Responses;
+import com.barberia.response.Respuesta;
+import com.barberia.serviceImpl.ServicioServiceImpl;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,77 +35,283 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @org.springframework.web.bind.annotation.RequestMapping(path = { "/servicio" })
+@Api(value="Rest de Servicios")
 public class ServicioController {
-	@Autowired
-	private ServicioModel ServicioModel;
+	
 
-	public ServicioController(ServicioModel ServicioModel) {
-		this.ServicioModel = ServicioModel;
+	private final Logger LOG = Logger.getLogger(this.getClass());
+	
+	@Autowired
+	private ServicioServiceImpl ServicioServiceImpl;
+	
+	@Autowired
+	private ServicioRepositoryImpl ServicioRepositoryImpl;
+
+	public ServicioController(ServicioRepositoryImpl ServicioRepositoryImpl) {
+		this.ServicioRepositoryImpl = ServicioRepositoryImpl;
 	}
 
 	@GetMapping(value = { "/allservicios" }, produces = { "application/json" })
 	@ResponseBody
-	public List<com.barberia.entity.ListarServicioInterno> getServicios() {
-		return ServicioModel.getInstance().getServicioRecords();
+	@ApiOperation("Retorna la Lista de todos los Servicios.")
+	public ResponseEntity<Respuesta<ListarServicioInterno,Responses,Excepcion>>getServicios() {
+		Respuesta<ListarServicioInterno, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(ServicioRepositoryImpl.getInstance().getServicioRecords().size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=ServicioServiceImpl.listarServicios(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=ServicioServiceImpl.listarServicios(HttpStatus.OK.toString().trim());
+
+		rpt.lista = ServicioRepositoryImpl.getInstance().getServicioRecords(); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@GetMapping(value = { "/allservicios" }, params = { "words" }, produces = { "application/json" })
 	@ResponseBody
-	public List<BuscarServicioInterno> getServicioByWords(@RequestParam String words) {
-		return ServicioModel.getInstance().getServicioByWords(words);
+	@ApiOperation("Retorna la lista de coincidencias cuyo nombre, descripción o código concuerde con un parámetro de texto.")
+	public ResponseEntity<Respuesta<BuscarServicioInterno,Responses,Excepcion>> getServicioByWords(@RequestParam String words) {
+		Respuesta<BuscarServicioInterno, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(ServicioRepositoryImpl.getInstance().getServicioByWords(words).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=ServicioServiceImpl.buscarServicios(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=ServicioServiceImpl.buscarServicios(HttpStatus.OK.toString().trim());
+
+		rpt.lista = ServicioRepositoryImpl.getInstance().getServicioByWords(words); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@GetMapping(value = { "/android/allservicios" }, produces = {
 			"application/json" })
 	@ResponseBody
-	public List<ListarServicio> getServ() {
-		return ServicioModel.getInstance().getServicioR();
+	@ApiOperation("Retorna la Lista de todos los Servicios en la aplicación móvil.")
+	public ResponseEntity<Respuesta<ListarServicio,Responses,Excepcion>> getServ() {
+		Respuesta<ListarServicio, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(ServicioRepositoryImpl.getInstance().getServicioR().size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=ServicioServiceImpl.listarServiciosA(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=ServicioServiceImpl.listarServiciosA(HttpStatus.OK.toString().trim());
+
+		rpt.lista = ServicioRepositoryImpl.getInstance().getServicioR(); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@GetMapping(value = { "/android/allservicios" }, params = {
 			"words" }, produces = { "application/json" })
 	@ResponseBody
-	public List<com.barberia.entity.BuscarServicio> getServByWords( @RequestParam String words) {
-		return ServicioModel.getInstance().getServByWords(words);
+	@ApiOperation("Retorna la lista de coincidencias en la aplicación móvil cuyo nombre, descripción o código concuerde con un parámetro de texto.")
+	public ResponseEntity<Respuesta<BuscarServicio,Responses,Excepcion>> getServByWords( @RequestParam String words) {
+		Respuesta<BuscarServicio, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(ServicioRepositoryImpl.getInstance().getServByWords(words).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=ServicioServiceImpl.buscarServiciosA(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=ServicioServiceImpl.buscarServiciosA(HttpStatus.OK.toString().trim());
+
+		rpt.lista = ServicioRepositoryImpl.getInstance().getServByWords(words); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@GetMapping(value = { "/android/{id}" }, produces = { "application/json" })
 	@ResponseBody
-	public List<ListarServicio> getServById(@PathVariable int id) {
-		return ServicioModel.getInstance().getServicioA(id);
+	@ApiOperation("Retorna un sólo registro de acuerdo con su identificador para el cliente móvil.")
+	public ResponseEntity<Respuesta<ListarServicio,Responses,Excepcion>> getServById(@PathVariable int id) {
+		Respuesta<ListarServicio, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(ServicioRepositoryImpl.getInstance().getServicioA(id).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=ServicioServiceImpl.recuperarServiciosA(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=ServicioServiceImpl.recuperarServiciosA(HttpStatus.OK.toString().trim());
+
+		rpt.lista = ServicioRepositoryImpl.getInstance().getServicioA(id); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@GetMapping(value = { "/get/{id}" }, produces = { "application/json" })
 	@ResponseBody
-	public List<RecuperarServicioInterno> getServicioById(@PathVariable int id) {
-		return ServicioModel.getInstance().getServicio(id);
+	@ApiOperation("Retorna un sólo registro de acuerdo con su identificador.")
+	public ResponseEntity<Respuesta<RecuperarServicioInterno,Responses,Excepcion>> getServicioById(@PathVariable int id) {
+		Respuesta<RecuperarServicioInterno, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(ServicioRepositoryImpl.getInstance().getServicio(id).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=ServicioServiceImpl.recuperarServicios(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=ServicioServiceImpl.recuperarServicios(HttpStatus.OK.toString().trim());
+
+		rpt.lista = ServicioRepositoryImpl.getInstance().getServicio(id); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@PostMapping(value = { "/{idUser}/register" }, produces = { "application/json" }, consumes = {
 			"application/json" })
 	@ResponseBody
-	public List<MensajesBeans> registerServicio(@PathVariable int idUser, @RequestBody InsertarServicio ins) {
+	@ApiOperation("Registra un servicio tomando como parámetro al usuario que lo registra y devuelve mensajes de error o confirmación.")
+	public ResponseEntity<Respuesta<MensajesBeans,Responses,Excepcion>> registerServicio(@PathVariable int idUser, @RequestBody InsertarServicio ins) {
 		InsertarServicio inst = new InsertarServicio(ins.getBnombser(), ins.getCidEstado(), ins.getDminutos(),
 				ins.getEprecio(), ins.getFdescripcion());
 
-		return ServicioModel.getInstance().addServicio(inst, idUser);
+		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(ServicioRepositoryImpl.getInstance().addServicio(inst, idUser).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=ServicioServiceImpl.registrarServicios(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=ServicioServiceImpl.registrarServicios(HttpStatus.OK.toString().trim());
+
+		rpt.lista = ServicioRepositoryImpl.getInstance().addServicio(inst, idUser); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@PutMapping(value = { "/{idUser}/update/{id}" }, produces = { "application/json" }, consumes = {
 			"application/json" })
 	@ResponseBody
-	public List<MensajesBeans> updateServicio(@PathVariable int idUser, @PathVariable int id,
+	@ApiOperation("Actualiza la información de un servicio tomando como parámetro al usuario que lo registra y devuelve mensajes de error o confirmación.")	
+	public ResponseEntity<Respuesta<MensajesBeans,Responses,Excepcion>> updateServicio(@PathVariable int idUser, @PathVariable int id,
 			@RequestBody RecuperarServicioInterno ins) {
 		RecuperarServicioInterno inst = new RecuperarServicioInterno(ins.getBnombser(), ins.getCidEstado(),
 				ins.getDminutos(), ins.getEprecio(), ins.getFdescripcion());
 
-		return ServicioModel.getInstance().updtServicio(id, inst, idUser);
+		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(ServicioRepositoryImpl.getInstance().updtServicio(id, inst, idUser).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=ServicioServiceImpl.actualizarServicios(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=ServicioServiceImpl.actualizarServicios(HttpStatus.OK.toString().trim());
+
+		rpt.lista = ServicioRepositoryImpl.getInstance().updtServicio(id, inst, idUser); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@DeleteMapping(value = { "/{idUser}/delete/{id}" }, produces = {
 			"application/json" }, consumes = { "application/json" })
 	@ResponseBody
-	public List<MensajesBeans> deleteServicio(@PathVariable int idUser, @PathVariable int id) {
-		return ServicioModel.getInstance().delServicio(id);
+	@ApiOperation("Elimina la información de un servicio tomando como parámetro al usuario que lo registra y devuelve mensajes de error o confirmación.")	
+	public ResponseEntity<Respuesta<MensajesBeans,Responses,Excepcion>> deleteServicio(@PathVariable int idUser, @PathVariable int id) {
+		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(ServicioRepositoryImpl.getInstance().delServicio(id).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=ServicioServiceImpl.eliminarServicios(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=ServicioServiceImpl.eliminarServicios(HttpStatus.OK.toString().trim());
+
+		rpt.lista = ServicioRepositoryImpl.getInstance().delServicio(id); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 }

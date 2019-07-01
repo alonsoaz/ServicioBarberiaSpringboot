@@ -1,4 +1,4 @@
-package com.barberia.model;
+package com.barberia.repositoryImpl;
 
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -8,13 +8,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Repository;
 
 import com.barberia.config.ConexionBD;
 import com.barberia.entity.*;
+import com.barberia.repository.ReservasRepository;
 
 @Repository
-public class ReservasModel {
+public class ReservasRepositoryImpl implements ReservasRepository{
 
 	private ConexionBD dbCon;
 	private Connection conn;
@@ -29,21 +31,25 @@ public class ReservasModel {
 	private List<BuscarReservaPorCliente> SearchReserva;
 	private List<ListarReservasPorCliente> ListReserva;
 
-	private static ReservasModel stdregd = null;
+	private static ReservasRepositoryImpl stdregd = null;
 
-	public static ReservasModel getInstance() {
+	private final Logger LOG = Logger.getLogger(this.getClass());
+
+	public static ReservasRepositoryImpl getInstance() {
 
 		if (stdregd == null) {
-			stdregd = new ReservasModel();
+			stdregd = new ReservasRepositoryImpl();
 			return stdregd;
 		} else {
 			return stdregd;
 		}
 	}
 
+	@Override
 	public List<MensajesBeans> askBarbero(ConsultaDisponibilidadBarbero ins, int idBarbero, int idServicio) {
 		mensaje = new ArrayList<MensajesBeans>();
 		String SQLQuery = "{call `sp.Consultar_Disponibilidad_Barbero`(?,?,?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			dbCon = new ConexionBD();
 		} catch (SQLException e) {
@@ -60,8 +66,12 @@ public class ReservasModel {
 			while (rslt.next()) {
 				mensaje.add(new MensajesBeans(rslt.getString(1)));
 			}
+			LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
+
+			return mensaje;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error de conexión: "+e.getMessage());
 		} finally {
 
 			if (conn != null) {
@@ -70,6 +80,7 @@ public class ReservasModel {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 
 			}
@@ -80,10 +91,12 @@ public class ReservasModel {
 
 	}
 
+	@Override
 	public List<MessagenID> tryBarbero(ConsultaDisponibilidadBarbero ins, int idBarbero, int idCliente,
 			int idServicio) {
 		mesgid = new ArrayList<MessagenID>();
 		String SQLQuery = "{call `sp.Generar_Reserva_Barbero`(?,?,?,?,?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			dbCon = new ConexionBD();
 		} catch (SQLException e) {
@@ -105,8 +118,11 @@ public class ReservasModel {
 			while (rslt.next()) {
 				mesgid.add(new MessagenID(rslt.getString(1), idReserva));
 			}
+			LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
+			return mesgid;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error en la ejecución: "+e.getMessage());
 		} finally {
 
 			if (conn != null) {
@@ -115,6 +131,7 @@ public class ReservasModel {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 
 			}
@@ -125,6 +142,7 @@ public class ReservasModel {
 
 	}
 
+	@Override
 	public List<ListarReservasPorCliente> getReservas(int idCliente) {
 		ListReserva = new ArrayList<ListarReservasPorCliente>();
 		try {
@@ -135,6 +153,7 @@ public class ReservasModel {
 
 		ResultSet rslt;
 		String SQLQuery = "{call `sp.Listar_Reservas_Por_Cliente`(?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 
 		try {
 			conn = ConexionBD.setDBConnection();
@@ -149,17 +168,21 @@ public class ReservasModel {
 							rslt.getString(4), rslt.getString(5), rslt.getString(6), rslt.getString(7),
 							rslt.getString(8)));
 				}
-
+				LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
+				return ListReserva;
 			} else {
 				rslt.beforeFirst();
 				ListReserva.add(new ListarReservasPorCliente(0, null, null, null, null, null, null,
 						"NO EXISTEN RESERVAS PENDIENTES."));
 
+
+				LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
 				return ListReserva;
 
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error en la ejecución: "+e.getMessage());
 		} finally {
 
 			if (conn != null) {
@@ -168,15 +191,16 @@ public class ReservasModel {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 
 			}
 
 		}
-
 		return ListReserva;
 	}
 
+	@Override
 	public List<BuscarReservaPorCliente> getReserva(int idCliente, int idReserva) {
 		SearchReserva = new ArrayList<BuscarReservaPorCliente>();
 		try {
@@ -187,6 +211,7 @@ public class ReservasModel {
 
 		ResultSet rslt;
 		String SQLQuery = "{call `sp.Recuperar_Reserva_Por_Cliente`(?,?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 
 		try {
 			conn = ConexionBD.setDBConnection();
@@ -198,8 +223,10 @@ public class ReservasModel {
 				SearchReserva.add(new BuscarReservaPorCliente(rslt.getInt(1), rslt.getString(2), rslt.getString(3),
 						rslt.getString(4), rslt.getString(5), rslt.getString(6), rslt.getString(7), rslt.getString(8)));
 			}
+			LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error en la ejecución: "+e.getMessage());
 		} finally {
 
 			if (conn != null) {
@@ -208,6 +235,7 @@ public class ReservasModel {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 
 			}
@@ -217,9 +245,11 @@ public class ReservasModel {
 		return SearchReserva;
 	}
 
+	@Override
 	public List<MensajesBeans> delReserva(int idCliente, int idReserva) {
 		mensaje = new ArrayList<MensajesBeans>();
 		String SQLQuery = "{call `sp.Eliminar_Reserva_Por_Cliente`(?,?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			dbCon = new ConexionBD();
 		} catch (SQLException e) {
@@ -235,8 +265,11 @@ public class ReservasModel {
 			while (rslt.next()) {
 				mensaje.add(new MensajesBeans(rslt.getString(1)));
 			}
+			LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
+			return mensaje;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error en la ejecución: "+e.getMessage());
 		} finally {
 
 			if (conn != null) {
@@ -245,6 +278,7 @@ public class ReservasModel {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 
 			}
@@ -255,9 +289,11 @@ public class ReservasModel {
 
 	}
 
+	@Override
 	public List<MensajesBeans> payReserva(int idCliente, int idReserva) {
 		mensaje = new ArrayList<MensajesBeans>();
 		String SQLQuery = "{call `sp.Pagar_Reserva_Por_Cliente`(?,?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			dbCon = new ConexionBD();
 		} catch (SQLException e) {
@@ -273,8 +309,11 @@ public class ReservasModel {
 			while (rslt.next()) {
 				mensaje.add(new MensajesBeans(rslt.getString(1)));
 			}
+			LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
+			return mensaje;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error en la ejecución: "+e.getMessage());
 		} finally {
 
 			if (conn != null) {
@@ -283,6 +322,7 @@ public class ReservasModel {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 
 			}

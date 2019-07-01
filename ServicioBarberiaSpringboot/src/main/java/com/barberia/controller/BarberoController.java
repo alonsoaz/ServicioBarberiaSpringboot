@@ -1,13 +1,28 @@
 package com.barberia.controller;
 
+import com.barberia.entity.BuscarBarbero;
 import com.barberia.entity.BuscarBarberoInterno;
 import com.barberia.entity.InsertarBarbero;
 import com.barberia.entity.ListarBarbero;
+import com.barberia.entity.ListarBarberoInterno;
 import com.barberia.entity.MensajesBeans;
 import com.barberia.entity.RecuperarBarberoInterno;
-import com.barberia.model.BarberoModel;
+import com.barberia.repositoryImpl.BarberoRepositoryImpl;
+import com.barberia.response.Excepcion;
+import com.barberia.response.Responses;
+import com.barberia.response.Respuesta;
+import com.barberia.serviceImpl.BarberoServiceImpl;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,77 +34,284 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @org.springframework.web.bind.annotation.RequestMapping(path = { "/barbero" })
+@Api(value="Rest de Barberos")
 public class BarberoController {
-	@Autowired
-	private BarberoModel BarberoModel;
+	
 
-	public BarberoController(BarberoModel BarberoModel) {
-		this.BarberoModel = BarberoModel;
+	private final Logger LOG = Logger.getLogger(this.getClass());
+
+	
+	@Autowired
+	private BarberoRepositoryImpl BarberoRepositoryImpl;
+	
+	@Autowired
+	private BarberoServiceImpl BarberoServiceImpl;
+
+	public BarberoController(BarberoRepositoryImpl BarberoRepositoryImpl) {
+		this.BarberoRepositoryImpl = BarberoRepositoryImpl;
 	}
 
+	
 	@GetMapping(value = { "/allbarberos" }, produces = { "application/json" })
 	@ResponseBody
-	public List<com.barberia.entity.ListarBarberoInterno> getBarberos() {
-		return BarberoModel.getInstance().getBarberoRecords();
+	@ApiOperation("Retorna la Lista de todos los Barberos.")
+	public ResponseEntity<Respuesta<ListarBarberoInterno,Responses,Excepcion>> getBarberos() {
+		Respuesta<ListarBarberoInterno, Responses, Excepcion> rpt = new Respuesta<>();
+		Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(BarberoRepositoryImpl.getInstance().getBarberoRecords().size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=BarberoServiceImpl.listarBarberoInterno(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=BarberoServiceImpl.listarBarberoInterno(HttpStatus.OK.toString().trim());
+
+		rpt.lista = BarberoRepositoryImpl.getInstance().getBarberoRecords(); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 	
 	@GetMapping(value = { "/android/allbarberos" }, produces = { "application/json" })
 	@ResponseBody
-	public List<ListarBarbero> getBarberoR() {
-		return BarberoModel.getInstance().getBarberoR();
+	@ApiOperation("Retorna la Lista de todos los Barberos para el cliente móvil.")
+	public ResponseEntity<Respuesta<ListarBarbero,Responses, Excepcion>> getBarberoR() {
+		Respuesta<ListarBarbero, Responses, Excepcion> rpt = new Respuesta<>();
+		Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(BarberoRepositoryImpl.getInstance().getBarberoR().size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=BarberoServiceImpl.listarBarberoInterno(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=BarberoServiceImpl.listarBarberoInterno(HttpStatus.OK.toString().trim());
+
+		rpt.lista = BarberoRepositoryImpl.getInstance().getBarberoR(); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@GetMapping(value = { "/allbarberos" }, params = { "words" }, produces = { "application/json" })
 	@ResponseBody
-	public List<BuscarBarberoInterno> getBarberoByWords(@RequestParam String words) {
-		return BarberoModel.getInstance().getBarberoByWords(words);
+	@ApiOperation("Retorna la lista de coincidencias cuyo nombre, apellido o código concuerde con un parámetro de texto.")
+	public ResponseEntity<Respuesta<BuscarBarberoInterno,Responses,Excepcion>> getBarberoByWords(@RequestParam String words) {
+		
+		Respuesta<BuscarBarberoInterno, Responses, Excepcion> rpt = new Respuesta<>();
+		Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(BarberoRepositoryImpl.getInstance().getBarberoByWords(words).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=BarberoServiceImpl.buscarBarberoInterno(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=BarberoServiceImpl.buscarBarberoInterno(HttpStatus.OK.toString().trim());
+
+		rpt.lista = BarberoRepositoryImpl.getInstance().getBarberoByWords(words); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
+		
 	}
 
 	@GetMapping(value = { "/android/allbarberos" }, params = { "words" }, produces = {
 			"application/json" })
 	@ResponseBody
-	public List<com.barberia.entity.BuscarBarbero> getBarbByWords(
+	@ApiOperation("Retorna la lista de coincidencias cuyo nombre, apellido o código concuerde con un parámetro de texto para el cliente móvil.")
+	public ResponseEntity<Respuesta<BuscarBarbero,Responses, Excepcion>> getBarbByWords(
 			@RequestParam String words) {
-		return BarberoModel.getInstance().getBarbByWords(words);
+		Respuesta<BuscarBarbero, Responses, Excepcion> rpt = new Respuesta<>();
+		
+		Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(BarberoRepositoryImpl.getInstance().getBarberoRecords().size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=BarberoServiceImpl.listarBarbero(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+	    rpt.excepcion=BarberoServiceImpl.listarBarbero(HttpStatus.OK.toString().trim());
+
+		rpt.lista = BarberoRepositoryImpl.getInstance().getBarbByWords(words); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@GetMapping(value = { "/android/{id}" }, produces = { "application/json" })
 	@ResponseBody
-	public List<ListarBarbero> getBarbById(@PathVariable int id) {
-		return BarberoModel.getInstance().getBarberoA(id);
+	@ApiOperation("Retorna un sólo registro de acuerdo con su identificador para el cliente móvil.")
+	public ResponseEntity<Respuesta<ListarBarbero,Responses,Excepcion>> getBarbById(@PathVariable int id) {
+		Respuesta<ListarBarbero, Responses, Excepcion> rpt = new Respuesta<>();
+		Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(BarberoRepositoryImpl.getInstance().getBarberoA(id).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=BarberoServiceImpl.buscarBarbero(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=BarberoServiceImpl.buscarBarbero(HttpStatus.OK.toString().trim());
+
+		rpt.lista = BarberoRepositoryImpl.getInstance().getBarberoA(id); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@GetMapping(value = { "/get/{id}" }, produces = { "application/json" })
 	@ResponseBody
-	public List<RecuperarBarberoInterno> getBarberoById(@PathVariable int id) {
-		return BarberoModel.getInstance().getBarbero(id);
+	@ApiOperation("Retorna un sólo registro de acuerdo con su identificador.")
+	public ResponseEntity<Respuesta<RecuperarBarberoInterno,Responses, Excepcion>> getBarberoById(@PathVariable int id) {
+		Respuesta<RecuperarBarberoInterno, Responses, Excepcion> rpt = new Respuesta<>();
+		Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(BarberoRepositoryImpl.getInstance().getBarbero(id).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=BarberoServiceImpl.recuperarBarbero(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=BarberoServiceImpl.recuperarBarbero(HttpStatus.OK.toString().trim());
+
+		rpt.lista = BarberoRepositoryImpl.getInstance().getBarbero(id); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@PostMapping(value = { "/{idUser}/register" }, produces = { "application/json" }, consumes = {
 			"application/json" })
 	@ResponseBody
-	public List<MensajesBeans> registerUsuario(@PathVariable int idUser, @RequestBody InsertarBarbero ins) {
+	@ApiOperation("Registra un barbero tomando como parámetro al usuario que lo registra y devuelve mensajes de error o confirmación.")
+	public ResponseEntity<Respuesta<MensajesBeans,Responses, Excepcion>> registerBarbero(@PathVariable int idUser, @RequestBody InsertarBarbero ins) {
 		InsertarBarbero inst = new InsertarBarbero(ins.getAnombre(), ins.getBapellido(), ins.getCtelefono(),
 				ins.getDdni(), ins.getEcorreo(), ins.getFdireccion());
 
-		return BarberoModel.getInstance().addBarbero(ins, idUser);
+		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
+		Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(BarberoRepositoryImpl.getInstance().addBarbero(ins, idUser).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=BarberoServiceImpl.registrarBarbero(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+	    rpt.excepcion=BarberoServiceImpl.registrarBarbero(HttpStatus.OK.toString().trim());
+
+		rpt.lista = BarberoRepositoryImpl.getInstance().addBarbero(ins, idUser); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@PutMapping(value = { "/{idUser}/update/{id}" }, produces = { "application/json" }, consumes = {
 			"application/json" })
 	@ResponseBody
-	public List<MensajesBeans> updateBarber(@PathVariable int idUser, @PathVariable int id,
+	@ApiOperation("Actualiza la información de un barbero tomando como parámetro al usuario que lo registra y devuelve mensajes de error o confirmación.")	
+	public ResponseEntity<Respuesta<MensajesBeans,Responses,Excepcion>>  updateBarber(@PathVariable int idUser, @PathVariable int id,
 			@RequestBody RecuperarBarberoInterno ins) {
 		RecuperarBarberoInterno inst = new RecuperarBarberoInterno(ins.getAidEstado(), ins.getbNombre(),
 				ins.getcApellido(), ins.getdTelefono(), ins.geteDni(), ins.getfEmail(), ins.getgDireccion());
 
-		return BarberoModel.getInstance().updtBarbero(id, ins, idUser);
+		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
+		Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(BarberoRepositoryImpl.getInstance().updtBarbero(id, ins, idUser).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=BarberoServiceImpl.actualizarBarbero(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+	    rpt.excepcion=BarberoServiceImpl.actualizarBarbero(HttpStatus.OK.toString().trim());
+
+		rpt.lista = BarberoRepositoryImpl.getInstance().updtBarbero(id, ins, idUser); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@PutMapping(value = { "/{idUser}/delete/{id}" }, produces = { "application/json" }, consumes = {
 			"application/json" })
 	@ResponseBody
-	public List<MensajesBeans> deleteUser(@PathVariable int idUser, @PathVariable int id) {
-		return BarberoModel.getInstance().delBarbero(id);
+	@ApiOperation("Elimina la información de un barbero tomando como parámetro al usuario que lo registra y devuelve mensajes de error o confirmación.")	
+	public ResponseEntity<Respuesta<MensajesBeans,Responses,Excepcion>> deleteUser(@PathVariable int idUser, @PathVariable int id) {
+		Respuesta<MensajesBeans, Responses,Excepcion> rpt = new Respuesta<>();
+		Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(BarberoRepositoryImpl.getInstance().delBarbero(id).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=BarberoServiceImpl.eliminarBarbero
+		    		(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+	    rpt.excepcion=BarberoServiceImpl.eliminarBarbero(HttpStatus.OK.toString().trim());
+		rpt.lista = BarberoRepositoryImpl.getInstance().delBarbero(id); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 }

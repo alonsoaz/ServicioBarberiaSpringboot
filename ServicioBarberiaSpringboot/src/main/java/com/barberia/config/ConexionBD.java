@@ -8,12 +8,16 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+
 public class ConexionBD
 {
   public static Connection dbCon;
   public PreparedStatement dbPs;
   public CallableStatement dbCs;
   public ResultSet dbRst;
+	
+	private final static Logger LOG = Logger.getLogger(ConexionBD.class);
   
   public ConexionBD() throws SQLException
   {
@@ -28,12 +32,12 @@ public class ConexionBD
     String password = "";
     String url = "jdbc:mysql://localhost:3306/" + bd;
     
-    System.out.println("Dentro de DBConnection");
+    LOG.info("Dentro de setDBConnection()");
     try {
       Class.forName("com.mysql.jdbc.Driver");
       dbCon = java.sql.DriverManager.getConnection(url, login, password);
     } catch (ClassNotFoundException e) {
-      System.out.println(e.getMessage());
+    	LOG.error("Error de conexón: "+e);
     }
     
     return dbCon;
@@ -41,8 +45,7 @@ public class ConexionBD
   
   public ResultSet getResultSet(String sqlQuery, Connection conn) throws SQLException
   {
-    System.out.println("Dentro de getResultSet");
-    System.out.println(sqlQuery);
+	LOG.info("Dentro de getResultSet");;
     String sqlquery = sqlQuery;
     dbCon = setDBConnection();
     try {
@@ -55,8 +58,7 @@ public class ConexionBD
   }
   
   public ResultSet getResultSet1(String sqlQuery, Connection conn) throws SQLException {
-    System.out.println("Dentro de getResultSet");
-    System.out.println(sqlQuery);
+    LOG.info("Dentro de getResultSet");
     String sqlquery = sqlQuery;
     dbCon = setDBConnection();
     try {

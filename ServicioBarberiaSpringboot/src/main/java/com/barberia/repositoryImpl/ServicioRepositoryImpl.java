@@ -1,12 +1,5 @@
-package com.barberia.model;
+package com.barberia.repositoryImpl;
 
-import com.barberia.config.ConexionBD;
-import com.barberia.entity.BuscarServicioInterno;
-import com.barberia.entity.InsertarServicio;
-import com.barberia.entity.ListarServicio;
-import com.barberia.entity.ListarServicioInterno;
-import com.barberia.entity.MensajesBeans;
-import com.barberia.entity.RecuperarServicioInterno;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,8 +8,20 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
+import com.barberia.config.ConexionBD;
+import com.barberia.entity.BuscarServicioInterno;
+import com.barberia.entity.InsertarServicio;
+import com.barberia.entity.ListarServicio;
+import com.barberia.entity.ListarServicioInterno;
+import com.barberia.entity.MensajesBeans;
+import com.barberia.entity.RecuperarServicioInterno;
+import com.barberia.repository.ServicioRepository;
+
 @org.springframework.stereotype.Repository
-public class ServicioModel {
+public class ServicioRepositoryImpl implements ServicioRepository{
+	
 	private ConexionBD dbCon;
 	private Connection conn;
 	private ResultSet rslt;
@@ -32,20 +37,23 @@ public class ServicioModel {
 	private List<BuscarServicioInterno> ServicioSearch;
 	private List<com.barberia.entity.BuscarServicio> ServicioS;
 	private List<RecuperarServicioInterno> ServicioGet;
-	private static ServicioModel stdregd = null;
+	private static ServicioRepositoryImpl stdregd = null;
 
-	public ServicioModel() {
+	private final Logger LOG = Logger.getLogger(this.getClass());
+
+	public ServicioRepositoryImpl() {
 	}
 
-	public static ServicioModel getInstance() {
+	public static ServicioRepositoryImpl getInstance() {
 		if (stdregd == null) {
-			stdregd = new ServicioModel();
+			stdregd = new ServicioRepositoryImpl();
 			return stdregd;
 		}
 
 		return stdregd;
 	}
 
+	@Override
 	public List<ListarServicioInterno> getServicioRecords() {
 		ServicioRecords = new ArrayList();
 		try {
@@ -55,6 +63,7 @@ public class ServicioModel {
 		}
 
 		String SQLQuery = "call `sp.Listar_Servicio_Interno`";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			conn = ConexionBD.setDBConnection();
 			ResultSet rslt = dbCon.getResultSet(SQLQuery, conn);
@@ -64,21 +73,25 @@ public class ServicioModel {
 						rslt.getString(9)));
 			}
 
+			LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
 			return ServicioRecords;
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
+			LOG.error("Error en la ejecución: "+e.getMessage());
+		} finally{
 			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 			}
 		}
 		return ServicioRecords;
 	}
 
+	@Override
 	public List<ListarServicio> getServicioR() {
 		ServicioR = new ArrayList();
 		try {
@@ -88,6 +101,7 @@ public class ServicioModel {
 		}
 
 		String SQLQuery = "call `sp.Listar_Servicio`";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			conn = ConexionBD.setDBConnection();
 			ResultSet rslt = dbCon.getResultSet(SQLQuery, conn);
@@ -95,21 +109,25 @@ public class ServicioModel {
 				ServicioR.add(new ListarServicio(rslt.getInt(1), rslt.getString(2), rslt.getInt(3), rslt.getDouble(4)));
 			}
 
+			LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
 			return ServicioR;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error en la ejecución: "+e.getMessage());
 		} finally {
 			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 			}
 		}
 		return ServicioR;
 	}
 
+	@Override
 	public List<BuscarServicioInterno> getServicioByWords(String words) {
 		ServicioSearch = new ArrayList();
 		try {
@@ -119,6 +137,7 @@ public class ServicioModel {
 		}
 
 		String SQLQuery = "{call `sp.Buscar_Servicio_Interno`(?,?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			conn = ConexionBD.setDBConnection();
 			clbl = conn.prepareCall(SQLQuery);
@@ -130,22 +149,26 @@ public class ServicioModel {
 						rslt.getString(4), rslt.getInt(5), rslt.getDouble(6), rslt.getString(7), rslt.getString(8),
 						rslt.getString(9), clbl.getInt(2)));
 			}
+			LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
 
 			return ServicioSearch;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error en la ejecución: "+e.getMessage());
 		} finally {
 			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 			}
 		}
 		return ServicioSearch;
 	}
 
+	@Override
 	public List<com.barberia.entity.BuscarServicio> getServByWords(String words) {
 		ServicioS = new ArrayList();
 		try {
@@ -155,6 +178,7 @@ public class ServicioModel {
 		}
 
 		String SQLQuery = "{call `sp.Buscar_Servicio`(?,?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			conn = ConexionBD.setDBConnection();
 			clbl = conn.prepareCall(SQLQuery);
@@ -166,22 +190,26 @@ public class ServicioModel {
 						rslt.getString(3), rslt.getString(4), rslt.getInt(5), rslt.getDouble(6), rslt.getString(7),
 						clbl.getInt(2)));
 			}
+			LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
 
 			return ServicioS;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error en la ejecución: "+e.getMessage());
 		} finally {
 			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 			}
 		}
 		return ServicioS;
 	}
 
+	@Override
 	public List<RecuperarServicioInterno> getServicio(int id) {
 		ServicioGet = new ArrayList();
 		try {
@@ -191,6 +219,7 @@ public class ServicioModel {
 		}
 
 		String SQLQuery = "{call `sp.Recuperar_Servicio_Interno`(?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			conn = ConexionBD.setDBConnection();
 			stmt = conn.prepareStatement(SQLQuery);
@@ -201,21 +230,25 @@ public class ServicioModel {
 						rslt.getDouble(4), rslt.getString(5)));
 			}
 
+			LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
 			return ServicioGet;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error en la ejecución: "+e.getMessage());
 		} finally {
 			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 			}
 		}
 		return ServicioGet;
 	}
 
+	@Override
 	public List<ListarServicio> getServicioA(int id) {
 		ServicioR = new ArrayList();
 		try {
@@ -225,6 +258,7 @@ public class ServicioModel {
 		}
 
 		String SQLQuery = "{call `sp.Recuperar_Servicio_Android`(?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			conn = ConexionBD.setDBConnection();
 			stmt = conn.prepareStatement(SQLQuery);
@@ -238,25 +272,30 @@ public class ServicioModel {
 						rslt.getDouble(4)));
 			}
 
+			LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
 			return ServicioR;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error en la ejecución: "+e.getMessage());
 		} finally {
 			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 			}
 		}
 		return ServicioR;
 	}
 	
+	@Override
 	public List<MensajesBeans> addServicio(InsertarServicio ins, int idUsuario) {
 		mensaje = new ArrayList();
 
 		String SQLQuery = "{call `sp.Insertar_Servicio`(?,?,?,?,?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			dbCon = new ConexionBD();
 		} catch (SQLException e) {
@@ -275,29 +314,35 @@ public class ServicioModel {
 			while (rslt.next()) {
 				mensaje.add(new MensajesBeans(rslt.getString(1)));
 			}
+			LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
 			return mensaje;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error en la ejecución: "+e.getMessage());
 		} finally {
 			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 			}
 		}
 		return mensaje;
 	}
 
+	@Override
 	public List<MensajesBeans> updtServicio(int idServicio, RecuperarServicioInterno ins, int idUser) {
 		mensaje = new ArrayList();
 
 		String SQLQuery = "{call `sp.Actualizar_Servicio`(?,?,?,?,?,?,?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			dbCon = new ConexionBD();
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error en la ejecución: "+e.getMessage());
 		}
 		try {
 			conn = ConexionBD.setDBConnection();
@@ -314,9 +359,11 @@ public class ServicioModel {
 			while (rslt.next()) {
 				mensaje.add(new MensajesBeans(rslt.getString(1)));
 			}
+			LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
 			return mensaje;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error de conexión: "+e.getMessage());
 		} finally {
 			if (conn != null) {
 				try {
@@ -329,10 +376,12 @@ public class ServicioModel {
 		return mensaje;
 	}
 
+	@Override
 	public List<MensajesBeans> delServicio(int idServicio) {
 		mensaje = new ArrayList();
 
 		String SQLQuery = "{call `sp.Eliminar_Servicio`(?)}";
+		LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
 		try {
 			dbCon = new ConexionBD();
 		} catch (SQLException e) {
@@ -347,15 +396,18 @@ public class ServicioModel {
 			while (rslt.next()) {
 				mensaje.add(new MensajesBeans(rslt.getString(1)));
 			}
+			LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
 			return mensaje;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			LOG.error("Error de conexión: "+e.getMessage());
 		} finally {
 			if (conn != null) {
 				try {
 					conn.close();
 				} catch (SQLException e) {
 					e.printStackTrace();
+					LOG.error("Error de conexión: "+e.getMessage());
 				}
 			}
 		}

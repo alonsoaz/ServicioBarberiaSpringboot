@@ -2,13 +2,28 @@ package com.barberia.controller;
 
 import com.barberia.entity.MensajesBeans;
 import com.barberia.entity.MessagenID;
+import com.barberia.entity.MostrarDetalleVenta;
 import com.barberia.entity.MostrarDetalleVentaPagada;
 import com.barberia.entity.MostrarVentaPagada;
+import com.barberia.entity.MostrarVentaPorPagar;
 import com.barberia.entity.RecuperarDetalleVenta;
 import com.barberia.entity.RegistrarDetalleVentaXpAgar;
-import com.barberia.model.RegDetVentModel;
+import com.barberia.repositoryImpl.RegDetVentRepositoryImpl;
+import com.barberia.response.Excepcion;
+import com.barberia.response.Responses;
+import com.barberia.response.Respuesta;
+import com.barberia.serviceImpl.RegDetVentServiceImpl;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+import java.util.ArrayList;
 import java.util.List;
+
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,86 +35,336 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @org.springframework.web.bind.annotation.RequestMapping(path = { "/compras" })
+@Api(value="Rest de Compras")
 public class RegDetVentController {
-	@Autowired
-	private RegDetVentModel RegDetVentModel;
+	
 
-	public RegDetVentController(RegDetVentModel RegDetVentModel) {
-		this.RegDetVentModel = RegDetVentModel;
+	private final Logger LOG = Logger.getLogger(this.getClass());
+	
+	@Autowired
+	private RegDetVentRepositoryImpl RegDetVentRepositoryImpl;
+	
+	@Autowired
+	private RegDetVentServiceImpl RegDetVentServiceImpl;
+
+	public RegDetVentController(RegDetVentRepositoryImpl RegDetVentRepositoryImpl) {
+		this.RegDetVentRepositoryImpl = RegDetVentRepositoryImpl;
 	}
 
 	@PostMapping(value = {"/{idClient}/android/producto/{idProd}" }, produces = {
 					"application/json" }, consumes = { "application/json" })
 	@ResponseBody
-	public List<MessagenID> registerProducto(@PathVariable int idClient, @PathVariable int idProd,
+	@ApiOperation("Registra un producto dentro del carrito de compras.")
+	public ResponseEntity<Respuesta<MessagenID,Responses,Excepcion>> registerProducto(@PathVariable int idClient, @PathVariable int idProd,
 			@RequestBody RegistrarDetalleVentaXpAgar ins) {
 		RegistrarDetalleVentaXpAgar inst = new RegistrarDetalleVentaXpAgar(ins.getCantidad());
 
-		return RegDetVentModel.getInstance().regDetVent(inst, idClient, idProd);
+		Respuesta<MessagenID, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(RegDetVentRepositoryImpl.getInstance().regDetVent(inst, idClient, idProd).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=RegDetVentServiceImpl.regProdxPagar(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=RegDetVentServiceImpl.regProdxPagar(HttpStatus.OK.toString().trim());
+
+		rpt.lista = RegDetVentRepositoryImpl.getInstance().regDetVent(inst, idClient, idProd); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@GetMapping(value = { "/{idClient}/android/carrito" }, produces = { "application/json" })
 	@ResponseBody
-	public List<com.barberia.entity.MostrarVentaPorPagar> showVentaXpagar(@PathVariable int idClient) {
-		return RegDetVentModel.getInstance().showVentaXpagar(idClient);
+	@ApiOperation("Muestra la información del carrito de compras.")
+	public ResponseEntity<Respuesta<MostrarVentaPorPagar,Responses,Excepcion>> showVentaXpagar(@PathVariable int idClient) {
+		Respuesta<MostrarVentaPorPagar, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(RegDetVentRepositoryImpl.getInstance().showVentaXpagar(idClient).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=RegDetVentServiceImpl.mostrarCarrito(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=RegDetVentServiceImpl.mostrarCarrito(HttpStatus.OK.toString().trim());
+
+		rpt.lista = RegDetVentRepositoryImpl.getInstance().showVentaXpagar(idClient); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@PostMapping(value = { "/{idClient}/android/carrito/delete" }, produces = { "application/json" })
 	@ResponseBody
-	public List<MensajesBeans> deleteVentaXpagar(@PathVariable int idClient) {
-		return RegDetVentModel.getInstance().delVenta(idClient);
+	@ApiOperation("Elimina el carrito de compras.")
+	public ResponseEntity<Respuesta<MensajesBeans,Responses,Excepcion>> deleteVentaXpagar(@PathVariable int idClient) {
+		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(RegDetVentRepositoryImpl.getInstance().delVenta(idClient).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=RegDetVentServiceImpl.eliminarCarrito(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=RegDetVentServiceImpl.eliminarCarrito(HttpStatus.OK.toString().trim());
+
+		rpt.lista = RegDetVentRepositoryImpl.getInstance().delVenta(idClient); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@PostMapping(value = { "/{idClient}/android/carrito/pagar" }, produces = { "application/json" })
 	@ResponseBody
-	public List<MensajesBeans> payVentaXpagar(@PathVariable int idClient) {
-		return RegDetVentModel.getInstance().payVenta(idClient);
+	@ApiOperation("Paga el carrito de compras.")
+	public ResponseEntity<Respuesta<MensajesBeans,Responses,Excepcion>> payVentaXpagar(@PathVariable int idClient) {
+		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(RegDetVentRepositoryImpl.getInstance().payVenta(idClient).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=RegDetVentServiceImpl.pagarCarrito(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=RegDetVentServiceImpl.pagarCarrito(HttpStatus.OK.toString().trim());
+
+		rpt.lista = RegDetVentRepositoryImpl.getInstance().payVenta(idClient); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@GetMapping(value = { "/{idClient}/android/carrito/detalle" }, produces = { "application/json" })
 	@ResponseBody
-	public List<com.barberia.entity.MostrarDetalleVenta> ShowDVxPagar(@PathVariable int idClient) {
-		return RegDetVentModel.getInstance().ShowDVxPagar(idClient);
+	@ApiOperation("Muestra la información del detalle del carrito de compras.")
+	public ResponseEntity<Respuesta<MostrarDetalleVenta,Responses,Excepcion>> ShowDVxPagar(@PathVariable int idClient) {
+		Respuesta<MostrarDetalleVenta, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(RegDetVentRepositoryImpl.getInstance().ShowDVxPagar(idClient).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=RegDetVentServiceImpl.mostrarDetalleCarrito(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=RegDetVentServiceImpl.mostrarDetalleCarrito(HttpStatus.OK.toString().trim());
+
+		rpt.lista = RegDetVentRepositoryImpl.getInstance().ShowDVxPagar(idClient); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@GetMapping(value = { "/{idClient}/android/carrito/detalle/{id}" }, produces = { "application/json" })
 	@ResponseBody
-	public List<RecuperarDetalleVenta> getDV(@PathVariable int idClient, @PathVariable int id) {
-		return RegDetVentModel.getInstance().getDV(id);
+	@ApiOperation("Elimina el detalle del carrito de compras.")
+	public ResponseEntity<Respuesta<RecuperarDetalleVenta,Responses,Excepcion>> getDV(@PathVariable int idClient, @PathVariable int id) {
+		Respuesta<RecuperarDetalleVenta, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(RegDetVentRepositoryImpl.getInstance().getDV(id).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=RegDetVentServiceImpl.recuperarDetalleCarrito(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=RegDetVentServiceImpl.recuperarDetalleCarrito(HttpStatus.OK.toString().trim());
+
+		rpt.lista = RegDetVentRepositoryImpl.getInstance().getDV(id); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@PutMapping(value = { "/{idClient}/android/carrito/detalle/update/{id}" }, produces = {
 			"application/json" }, consumes = { "application/json" })
 	@ResponseBody
-	public List<MensajesBeans> updtDetVent(@PathVariable int idClient, @PathVariable int id,
+	@ApiOperation("Actualiza el detalle del carrito de compras.")
+	public ResponseEntity<Respuesta<MensajesBeans,Responses,Excepcion>> updtDetVent(@PathVariable int idClient, @PathVariable int id,
 			@RequestBody RegistrarDetalleVentaXpAgar ins) {
 		RegistrarDetalleVentaXpAgar inst = new RegistrarDetalleVentaXpAgar(ins.getCantidad());
 
-		return RegDetVentModel.getInstance().updtDetVent(id, inst);
+		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(RegDetVentRepositoryImpl.getInstance().updtDetVent(id, inst).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=RegDetVentServiceImpl.actualizarDetalleCarrito(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=RegDetVentServiceImpl.actualizarDetalleCarrito(HttpStatus.OK.toString().trim());
+
+		rpt.lista = RegDetVentRepositoryImpl.getInstance().updtDetVent(id, inst); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@PostMapping(value = { "/{idClient}/android/carrito/detalle/delete/{id}" }, produces = {
 			"application/json" }, consumes = { "application/json" })
 	@ResponseBody
-	public List<MensajesBeans> delDV(@PathVariable int id) {
-		return RegDetVentModel.getInstance().delDV(id);
+	@ApiOperation("Elimina un detalle del carrito de compras.")
+	public ResponseEntity<Respuesta<MensajesBeans,Responses,Excepcion>> delDV(@PathVariable int id) {
+		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(RegDetVentRepositoryImpl.getInstance().delDV(id).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=RegDetVentServiceImpl.eliminarDetalleCarrito(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=RegDetVentServiceImpl.eliminarDetalleCarrito(HttpStatus.OK.toString().trim());
+
+		rpt.lista = RegDetVentRepositoryImpl.getInstance().delDV(id); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@PostMapping(value = { "/{idClient}/android/carrito/detalle/pagar/{id}" }, produces = { "application/json" })
 	@ResponseBody
-	public List<MensajesBeans> payDetVentaXpagar(@PathVariable int idClient, @PathVariable int id) {
-		return RegDetVentModel.getInstance().payDetVenta(idClient, id);
+	@ApiOperation("Paga un detalle del carrito de compras.")
+	public ResponseEntity<Respuesta<MensajesBeans,Responses,Excepcion>> payDetVentaXpagar(@PathVariable int idClient, @PathVariable int id) {
+		Respuesta<MensajesBeans, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(RegDetVentRepositoryImpl.getInstance().payDetVenta(idClient, id).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=RegDetVentServiceImpl.pagarDetalleCarrito(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=RegDetVentServiceImpl.pagarDetalleCarrito(HttpStatus.OK.toString().trim());
+
+		rpt.lista = RegDetVentRepositoryImpl.getInstance().payDetVenta(idClient, id); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@GetMapping(value = { "/{idClient}/android/allcompras" }, produces = { "application/json" })
 	@ResponseBody
-	public List<MostrarVentaPagada> showVentaPagada(@PathVariable int idClient) {
-		return RegDetVentModel.getInstance().showVentaPagada(idClient);
+	@ApiOperation("Lista todas las compras por cliente.")
+	public ResponseEntity<Respuesta<MostrarVentaPagada,Responses,Excepcion>> showVentaPagada(@PathVariable int idClient) {
+		Respuesta<MostrarVentaPagada, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(RegDetVentRepositoryImpl.getInstance().showVentaPagada(idClient).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=RegDetVentServiceImpl.listarCompras(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=RegDetVentServiceImpl.listarCompras(HttpStatus.OK.toString().trim());
+
+		rpt.lista = RegDetVentRepositoryImpl.getInstance().showVentaPagada(idClient); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 
 	@GetMapping(value = { "/{idClient}/android/allcompras/detalle/{id}" }, produces = { "application/json" })
 	@ResponseBody
-	public List<MostrarDetalleVentaPagada> showVentaPagada(@PathVariable int idClient, @PathVariable int id) {
-		return RegDetVentModel.getInstance().showDetVentaPagada(idClient, id);
+	@ApiOperation("Lista un detalle por compra de un cliente")
+	public ResponseEntity<Respuesta<MostrarDetalleVentaPagada,Responses,Excepcion>> showVentaPagada(@PathVariable int idClient, @PathVariable int id) {
+		Respuesta<MostrarDetalleVentaPagada, Responses, Excepcion> rpt = new Respuesta<>();
+        Responses responses = null;
+		List<Responses> lista = new ArrayList<>();
+		
+		if(RegDetVentRepositoryImpl.getInstance().showDetVentaPagada(idClient, id).size()==0) 
+		{
+		    LOG.error("Codigo de error: "+HttpStatus.NOT_FOUND.toString().trim());
+		    responses = new Responses(HttpStatus.NOT_FOUND.toString().trim());
+		    rpt.excepcion=RegDetVentServiceImpl.listarDetalleDeCompras(HttpStatus.NOT_FOUND.toString().trim());
+		    lista.add(responses);
+		    rpt.response = lista;
+		    
+		    return new ResponseEntity<>(rpt,HttpStatus.NOT_FOUND);
+		}
+		
+		lista.add(new Responses(HttpStatus.OK.toString().trim()));
+	    rpt.excepcion=RegDetVentServiceImpl.listarDetalleDeCompras(HttpStatus.OK.toString().trim());
+
+		rpt.lista = RegDetVentRepositoryImpl.getInstance().showDetVentaPagada(idClient, id); 
+		rpt.response = lista;
+		
+		return new ResponseEntity<>(rpt,HttpStatus.OK);
 	}
 }

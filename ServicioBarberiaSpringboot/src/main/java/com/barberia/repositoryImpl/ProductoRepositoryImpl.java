@@ -1,12 +1,15 @@
-package com.barberia.model;
+package com.barberia.repositoryImpl;
 
 import com.barberia.config.ConexionBD;
 import com.barberia.entity.BuscaProductoInterno;
 import com.barberia.entity.BuscarProducto;
 import com.barberia.entity.InsertarProducto;
 import com.barberia.entity.ListarProducto;
+import com.barberia.entity.ListarProductoInterno;
 import com.barberia.entity.MensajesBeans;
 import com.barberia.entity.RecuperarProductoInterno;
+import com.barberia.repository.ProductoRepository;
+
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,8 +18,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 @org.springframework.stereotype.Repository
-public class ProductoModel
+public class ProductoRepositoryImpl implements ProductoRepository
 {
   private ConexionBD dbCon;
   private Connection conn;
@@ -33,12 +38,14 @@ public class ProductoModel
   private List<BuscaProductoInterno> ProductoSearch;
   private List<BuscarProducto> ProductoS;
   private List<RecuperarProductoInterno> ProductoGet;
-  private static ProductoModel stdregd = null;
+  private static ProductoRepositoryImpl stdregd = null;
   
-  public ProductoModel() {}
+	private final Logger LOG = Logger.getLogger(this.getClass());
   
-  public static ProductoModel getInstance() { if (stdregd == null) {
-      stdregd = new ProductoModel();
+  public ProductoRepositoryImpl() {}
+  
+  public static ProductoRepositoryImpl getInstance() { if (stdregd == null) {
+      stdregd = new ProductoRepositoryImpl();
       return stdregd;
     }
     
@@ -46,7 +53,8 @@ public class ProductoModel
   }
   
 
-  public List<com.barberia.entity.ListarProductoInterno> getProductoRecords()
+  @Override
+  public List<ListarProductoInterno> getProductoRecords()
   {
     ProductoRecords = new ArrayList();
     try
@@ -58,6 +66,7 @@ public class ProductoModel
     
 
     String SQLQuery = "call `sp.Listar_Producto_Interno`";
+	LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
     try
     {
       conn = ConexionBD.setDBConnection();
@@ -77,12 +86,14 @@ public class ProductoModel
           .getString(10), rslt
           .getString(11)));
       }
-      
+
+    	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
       return ProductoRecords;
     }
     catch (SQLException e)
     {
       e.printStackTrace();
+		LOG.error("Error en la ejecución: "+e.getMessage());
     }
     finally {
       if (conn != null) {
@@ -91,12 +102,14 @@ public class ProductoModel
           conn.close();
         } catch (SQLException e) {
           e.printStackTrace();
+			LOG.error("Error de conexión: "+e.getMessage());
         }
       }
     }
 	return ProductoRecords;
   }
  
+  @Override
   public List<ListarProducto> getProductoR()
   {
     ProductoR = new ArrayList();
@@ -109,6 +122,7 @@ public class ProductoModel
     
 
     String SQLQuery = "call `sp.Listar_Producto`";
+	LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
     try
     {
       conn = ConexionBD.setDBConnection();
@@ -120,11 +134,13 @@ public class ProductoModel
           .getDouble(3), rslt
           .getString(4)));
       }
+  	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
       return ProductoR;
     }
     catch (SQLException e)
     {
       e.printStackTrace();
+		LOG.error("Error en la ejecución: "+e.getMessage());
     }
     finally {
       if (conn != null) {
@@ -133,12 +149,14 @@ public class ProductoModel
           conn.close();
         } catch (SQLException e) {
           e.printStackTrace();
+			LOG.error("Error de conexión: "+e.getMessage());
         }
       }
     }
 	return ProductoR;
   }
   
+  @Override
   public List<BuscaProductoInterno> getProductoByWords(String words)
   {
     ProductoSearch = new ArrayList();
@@ -150,6 +168,7 @@ public class ProductoModel
     }
     
     String SQLQuery = "{call `sp.Buscar_Producto_Interno`(?,?)}";
+	LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
     try
     {
       conn = ConexionBD.setDBConnection();
@@ -172,11 +191,13 @@ public class ProductoModel
           .getString(11), clbl
           .getInt(2)));
       }
-      return ProductoSearch;
+    	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
+        return ProductoSearch;
     }
     catch (SQLException e)
     {
       e.printStackTrace();
+		LOG.error("Error en la ejecución: "+e.getMessage());
     }
     finally {
       if (conn != null) {
@@ -185,12 +206,14 @@ public class ProductoModel
           conn.close();
         } catch (SQLException e) {
           e.printStackTrace();
+			LOG.error("Error de conexión: "+e.getMessage());
         }
       }
     }
 	return ProductoSearch;
   }
 
+  @Override
   public List<BuscarProducto> getProdByWords(String words)
   {
     ProductoS = new ArrayList();
@@ -203,6 +226,7 @@ public class ProductoModel
     
 
     String SQLQuery = "{call `sp.Buscar_Producto`(?,?)}";
+	LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
     try
     {
       conn = ConexionBD.setDBConnection();
@@ -222,11 +246,14 @@ public class ProductoModel
           .getString(8), clbl
           .getInt(2)));
       }
+    	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
+        
       return ProductoS;
     }
     catch (SQLException e)
     {
       e.printStackTrace();
+		LOG.error("Error en la ejecución: "+e.getMessage());
     }
     finally {
       if (conn != null) {
@@ -235,12 +262,14 @@ public class ProductoModel
           conn.close();
         } catch (SQLException e) {
           e.printStackTrace();
+			LOG.error("Error de conexión: "+e.getMessage());
         }
       }
     }
 	return ProductoS;
   }
   
+  @Override
   public List<RecuperarProductoInterno> getProducto(int id)
   {
     ProductoGet = new ArrayList();
@@ -252,6 +281,8 @@ public class ProductoModel
     }
     
     String SQLQuery = "{call `sp.Recuperar_Producto_Interno`(?)}";
+	LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
+    
     try
     {
       conn = ConexionBD.setDBConnection();
@@ -268,12 +299,15 @@ public class ProductoModel
           .getDouble(6), rslt
           .getString(7)));
       }
-      
+
+    	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
+        
       return ProductoGet;
     }
     catch (SQLException e)
     {
       e.printStackTrace();
+		LOG.error("Error en la ejecución: "+e.getMessage());
     }
     finally {
       if (conn != null) {
@@ -282,12 +316,14 @@ public class ProductoModel
           conn.close();
         } catch (SQLException e) {
           e.printStackTrace();
+			LOG.error("Error de conexión: "+e.getMessage());
         }
       }
     }
 	return ProductoGet;
   }
   
+  @Override
   public List<ListarProducto> getProd(int id)
   {
     ProductoR = new ArrayList();
@@ -300,6 +336,8 @@ public class ProductoModel
     
 
     String SQLQuery = "{call `sp.Recuperar_Producto_Android`(?)}";
+	LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
+    
     try
     {
       conn = ConexionBD.setDBConnection();
@@ -313,11 +351,14 @@ public class ProductoModel
     	          .getDouble(3), rslt
     	          .getString(4)));
       }
+    	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
+        
       return ProductoR;
     }
     catch (SQLException e)
     {
       e.printStackTrace();
+		LOG.error("Error en la ejecución: "+e.getMessage());
     }
     finally {
       if (conn != null) {
@@ -326,17 +367,20 @@ public class ProductoModel
           conn.close();
         } catch (SQLException e) {
           e.printStackTrace();
+			LOG.error("Error de conexión: "+e.getMessage());
         }
       }
     }
 	return ProductoR;
   }
   
+  @Override
   public List<MensajesBeans> addProducto(InsertarProducto ins, int idUsuario)
   {
     mensaje = new ArrayList();
     
     String SQLQuery = "{call `sp.Insertar_Producto`(?,?,?,?,?,?,?)}";
+	LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
     try {
       dbCon = new ConexionBD();
     } catch (SQLException e) {
@@ -357,11 +401,14 @@ public class ProductoModel
       while (rslt.next()) {
         mensaje.add(new MensajesBeans(rslt.getString(1)));
       }
+    	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
+        
       return mensaje;
     }
     catch (SQLException e)
     {
       e.printStackTrace();
+		LOG.error("Error en la ejecución: "+e.getMessage());
     }
     finally {
       if (conn != null) {
@@ -370,17 +417,20 @@ public class ProductoModel
           conn.close();
         } catch (SQLException e) {
           e.printStackTrace();
+			LOG.error("Error de conexión: "+e.getMessage());
         }
       }
     }
 	return mensaje;
   }
   
+  @Override
   public List<MensajesBeans> updtProducto(int idProducto, RecuperarProductoInterno ins, int idUser)
   {
     mensaje = new ArrayList();
     
     String SQLQuery = "{call `sp.Actualizar_Producto`(?,?,?,?,?,?,?,?,?)}";
+	LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
     try {
       dbCon = new ConexionBD();
     } catch (SQLException e) {
@@ -403,11 +453,14 @@ public class ProductoModel
       while (rslt.next()) {
         mensaje.add(new MensajesBeans(rslt.getString(1)));
       }
+    	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
+        
       return mensaje;
     }
     catch (SQLException e)
     {
       e.printStackTrace();
+		LOG.error("Error en la ejecución: "+e.getMessage());
     }
     finally {
       if (conn != null) {
@@ -416,17 +469,20 @@ public class ProductoModel
           conn.close();
         } catch (SQLException e) {
           e.printStackTrace();
+			LOG.error("Error de conexión: "+e.getMessage());
         }
       }
     }
 	return mensaje;
   }
   
+  @Override
   public List<MensajesBeans> delProducto(int idProducto)
   {
     mensaje = new ArrayList();
     
     String SQLQuery = "{call `sp.Eliminar_Producto`(?)}";
+	LOG.info("Ejecutando el procedimiento almacenado: "+SQLQuery);
     try {
       dbCon = new ConexionBD();
     } catch (SQLException e) {
@@ -440,11 +496,14 @@ public class ProductoModel
       rslt.beforeFirst();
       while (rslt.next()) {
         mensaje.add(new MensajesBeans(rslt.getString(1)));
-      } return mensaje;
+      } 
+    	LOG.info("Fin de la ejecución del procedimiento almacenado: "+SQLQuery);
+        return mensaje;
     }
     catch (SQLException e)
     {
       e.printStackTrace();
+		LOG.error("Error en la ejecución: "+e.getMessage());
     }
     finally {
       if (conn != null) {
@@ -453,6 +512,7 @@ public class ProductoModel
           conn.close();
         } catch (SQLException e) {
           e.printStackTrace();
+			LOG.error("Error de conexión: "+e.getMessage());
         }
       }
     }
